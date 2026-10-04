@@ -11,42 +11,11 @@
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
-    <style>
-        .table thead.thead-siakad th {
-            background-color: #3e454d !important;
-            color: #ffffff !important;
-            vertical-align: middle;
-            font-size: 0.85rem;
-            font-weight: 700;
-            padding: 9px !important;
-            white-space: nowrap !important;
-        }
-        .badge-status-asset {
-            border-radius: 20px;
-            padding: 4px 14px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: white;
-            display: inline-block;
-        }
-        .badge-tersedia { background-color: #10b981; }
-        .badge-dipinjam { background-color: #f59e0b; }
-        .badge-kode {
-            background-color: #eff6ff;
-            color: #3b66de;
-            border: 1px solid #bfdbfe;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 0.8rem;
-        }
-    </style>
 </head>
 
 <body id="page-top">
     <div id="wrapper">
-        <!-- Sidebar -->
+        <!-- Sidebar ASLI LENGKAP -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
@@ -122,7 +91,7 @@
                         </a>
                     </div>
 
-                    <!-- Row Statistik (Nilai murni dihitung secara dinamis oleh JavaScript) -->
+                    <!-- Row 4 Kartu Statistik Live Server -->
                     <div class="row">
                         <!-- Total Asset -->
                         <div class="col-xl-3 col-md-6 mb-4">
@@ -218,107 +187,62 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- SCRIPT 100% DINAMIS DARI API & STORAGE -->
+    <!-- SCRIPT HITUNG STATISTIK DARI 3 API RESMI -->
     <script>
-        const API_READ_ASSET = "https://api.melangkah.my.id/asset/read.php";
-        const STORAGE_ASSET_KEY = "SIAKAD_ASSET_DATA";
-        const STORAGE_MHS_KEY = "SIAKAD_MHS_DATA";
+        const API_READ_ASSET      = "https://api.melangkah.my.id/asset/read.php";
+        const API_READ_MHS        = "https://api.melangkah.my.id/mahasiswa/read.php";
+        const API_READ_PEMINJAMAN = "https://api.melangkah.my.id/peminjaman/read.php";
 
-        // 1. AMBIL DATA ASSET DINAMIS (MURNI DARI API ATAU STORAGE AKTIF)
-        function loadDashboardData() {
-            // Prioritaskan cek storage aktif jika user baru saja melakukan CRUD di master_asset
-            const localData = localStorage.getItem(STORAGE_ASSET_KEY);
+        async function loadAllDashboardData() {
+            // Tampilkan icon loading
+            $("#statTotalAsset").html('<i class="fas fa-spinner fa-spin fa-sm text-muted"></i>');
+            $("#statTotalMhs").html('<i class="fas fa-spinner fa-spin fa-sm text-muted"></i>');
+            $("#statAssetDipinjam").html('<i class="fas fa-spinner fa-spin fa-sm text-muted"></i>');
+            $("#statAssetTersedia").html('<i class="fas fa-spinner fa-spin fa-sm text-muted"></i>');
 
-            if (localData) {
-                try {
-                    const parsed = JSON.parse(localData);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        renderDashboard(parsed);
-                        return;
-                    }
-                } catch (e) {
-                    console.error("Gagal parse local data", e);
-                }
+            try {
+                // Tarik data live dari 3 API secara bersamaan
+                const [resAsset, resMhs, resPinjam] = await Promise.all([
+                    fetch(API_READ_ASSET).then(r => r.json()).catch(() => []),
+                    fetch(API_READ_MHS).then(r => r.json()).catch(() => []),
+                    fetch(API_READ_PEMINJAMAN).then(r => r.json()).catch(() => [])
+                ]);
+
+                const assetList  = Array.isArray(resAsset) ? resAsset : (resAsset.data || []);
+                const mhsList    = Array.isArray(resMhs) ? resMhs : (resMhs.data || []);
+                const pinjamList = Array.isArray(resPinjam) ? resPinjam : (resPinjam.data || []);
+
+                // 1. Total Asset Kampus
+                $("#statTotalAsset").text(assetList.length + " Asset");
+
+                // 2. Total Mahasiswa Terdaftar
+                $("#statTotalMhs").text(mhsList.length + " Mahasiswa");
+
+                // 3. Asset Sedang Dipinjam
+                const countDipinjam = pinjamList.filter(p => {
+                    const st = (p.status_peminjaman || "").toLowerCase();
+                    return st.includes("pinjam");
+                }).length;
+                $("#statAssetDipinjam").text(countDipinjam + " Dipinjam");
+
+                // 4. Asset Tersedia
+                const countTersedia = assetList.filter(a => {
+                    const st = (a.status || "").toLowerCase();
+                    return st.includes("tersedia") || st === "";
+                }).length;
+                $("#statAssetTersedia").text(countTersedia + " Tersedia");
+
+            } catch (error) {
+                console.error("Gagal sinkronisasi dashboard:", error);
+                $("#statTotalAsset").text("0 Asset");
+                $("#statTotalMhs").text("0 Mahasiswa");
+                $("#statAssetDipinjam").text("0 Dipinjam");
+                $("#statAssetTersedia").text("0 Tersedia");
             }
-
-            // Jika belum ada di local, fetch murni langsung dari API endpoint read.php
-            fetch(API_READ_ASSET)
-                .then(response => {
-                    if (!response.ok) throw new Error("Jaringan bermasalah");
-                    return response.json();
-                })
-                .then(data => {
-                    const assetList = Array.isArray(data) ? data : (data.data || []);
-                    renderDashboard(assetList);
-                })
-                .catch(error => {
-                    console.error("Gagal load API:", error);
-                    $("#statTotalAsset").text("0 Asset");
-                    $("#statAssetDipinjam").text("0 Asset");
-                    $("#statAssetTersedia").text("0 Asset");
-                    $("#tbodyRingkasanAsset").html(`<tr><td colspan="6" class="text-center text-danger py-3">Gagal terhubung ke API Server.</td></tr>`);
-                });
-        }
-
-        // 2. HITUNG DAN RENDER STATISTIK SECARA MATEMATIS / DINAMIS
-        function renderDashboard(assetList) {
-            // Hitung dinamis dari panjang array
-            const total = assetList.length;
-            const dipinjam = assetList.filter(item => {
-                const st = (item.status || "").toLowerCase();
-                return st.includes("pinjam");
-            }).length;
-            const tersedia = total - dipinjam;
-
-            // Masukkan angka hasil perhitungan ke kartu
-            $("#statTotalAsset").text(total + " Asset");
-            $("#statAssetDipinjam").text(dipinjam + " Asset");
-            $("#statAssetTersedia").text(tersedia + " Asset");
-
-            // Render isi tabel ringkasan langsung dari array yang didapat
-            let rowsHtml = "";
-            if (assetList.length === 0) {
-                rowsHtml = `<tr><td colspan="6" class="text-center text-muted py-3">Belum ada data asset tersedia.</td></tr>`;
-            } else {
-                assetList.forEach((item, index) => {
-                    const isDipinjam = (item.status || "").toLowerCase().includes("pinjam");
-                    const badgeClass = isDipinjam ? "badge-dipinjam" : "badge-tersedia";
-                    const statusText = isDipinjam ? "Dipinjam" : "Tersedia";
-                    const kondisiText = item.kondisi || "Baik";
-
-                    rowsHtml += `
-                        <tr>
-                            <td class="text-center">${index + 1}</td>
-                            <td><span class="badge-kode">${item.kode_asset || item.kode || ('AST-' + (index + 1))}</span></td>
-                            <td class="font-weight-bold text-dark">${item.nama_asset || item.nama}</td>
-                            <td>${item.kategori || '-'}</td>
-                            <td><span class="badge badge-light border text-dark font-weight-bold">${kondisiText}</span></td>
-                            <td class="text-center"><span class="badge-status-asset ${badgeClass}">${statusText}</span></td>
-                        </tr>
-                    `;
-                });
-            }
-        }
-
-        // 3. HITUNG JUMLAH MAHASISWA SECARA DINAMIS
-        function loadMahasiswaCount() {
-            const rawMhs = localStorage.getItem(STORAGE_MHS_KEY);
-            let totalMhs = 0;
-            if (rawMhs) {
-                try {
-                    const list = JSON.parse(rawMhs);
-                    totalMhs = list.length;
-                } catch (e) {}
-            } else {
-                // Default hitung dari master mahasiswa bawaan (4 data)
-                totalMhs = 4;
-            }
-            $("#statTotalMhs").text(totalMhs + " Mahasiswa");
         }
 
         $(document).ready(function () {
-            loadDashboardData();
-            loadMahasiswaCount();
+            loadAllDashboardData();
         });
     </script>
 </body>

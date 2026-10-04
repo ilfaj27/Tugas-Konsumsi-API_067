@@ -33,18 +33,6 @@
             display: inline-block;
         }
 
-        .badge-status {
-            border-radius: 20px;
-            padding: 4px 14px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            display: inline-block;
-            color: #ffffff;
-        }
-
-        .badge-aktif { background-color: #10b981; }
-        .badge-cuti { background-color: #f59e0b; }
-
         .action-container { display: inline-flex !important; gap: 6px; }
 
         .btn-action-edit, .btn-action-delete {
@@ -68,7 +56,7 @@
 
 <body id="page-top">
     <div id="wrapper">
-        <!-- Sidebar -->
+        <!-- Sidebar ASLI UTUH -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
@@ -151,11 +139,11 @@
                                             <th class="text-center" style="width: 5%">No</th>
                                             <th style="width: 12%">NIM</th>
                                             <th style="width: 20%">Nama Mahasiswa</th>
-                                            <th style="width: 18%">Program Studi</th>
+                                            <th style="width: 18%">Jurusan</th>
                                             <th style="width: 10%">Angkatan</th>
-                                            <th style="width: 12%">Jenis Kelamin</th>
-                                            <th style="width: 13%">Status</th>
-                                            <th class="text-center" style="width: 10%">Aksi</th>
+                                            <th style="width: 15%">Email</th>
+                                            <th style="width: 12%">Telepon</th>
+                                            <th class="text-center" style="width: 8%">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbodyMahasiswa">
@@ -190,8 +178,8 @@
                     <div class="modal-body p-4">
                         <div class="form-row mb-3">
                             <div class="form-group col-md-6">
-                                <label class="small font-weight-bold">NIM (Nomor Induk Mahasiswa)</label>
-                                <input type="text" id="addNim" class="form-control" placeholder="Contoh: 230101001" required>
+                                <label class="small font-weight-bold">NIM (Gunakan NIM Unik/Baru)</label>
+                                <input type="text" id="addNim" class="form-control" placeholder="Contoh: 0920259999" required>
                             </div>
                             <div class="form-group col-md-6">
                                 <label class="small font-weight-bold">Nama Lengkap</label>
@@ -200,38 +188,29 @@
                         </div>
                         <div class="form-row mb-3">
                             <div class="form-group col-md-6">
-                                <label class="small font-weight-bold">Program Studi</label>
-                                <select id="addProdi" class="custom-select" required>
-                                    <option value="Teknik Informatika">Teknik Informatika (S1)</option>
-                                    <option value="Sistem Informasi">Sistem Informasi (S1)</option>
-                                    <option value="Teknologi Informasi">Teknologi Informasi (D3)</option>
-                                    <option value="Sains Data">Sains Data (S1)</option>
+                                <label class="small font-weight-bold">Jurusan</label>
+                                <select id="addJurusan" class="custom-select" required>
+                                    <option value="Teknik Informatika">Teknik Informatika</option>
+                                    <option value="Sains Data">Sains Data</option>
+                                    <option value="Teknik Komputer">Teknik Komputer</option>
+                                    <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
+                                    <option value="Robotika">Robotika</option>
+                                    <option value="TRPL">TRPL</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
                                 <label class="small font-weight-bold">Angkatan</label>
-                                <select id="addAngkatan" class="custom-select" required>
-                                    <option value="2025">2025</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2023" selected>2023</option>
-                                    <option value="2022">2022</option>
-                                </select>
+                                <input type="number" id="addAngkatan" class="form-control" value="2025" required>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label class="small font-weight-bold">Jenis Kelamin</label>
-                                <select id="addJk" class="custom-select" required>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
+                                <label class="small font-weight-bold">Email</label>
+                                <input type="email" id="addEmail" class="form-control" placeholder="nama@gmail.com" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label class="small font-weight-bold">Status</label>
-                                <select id="addStatusMhs" class="custom-select" required>
-                                    <option value="Aktif" selected>Aktif</option>
-                                    <option value="Cuti">Cuti</option>
-                                </select>
+                                <label class="small font-weight-bold">Nomor Telepon / WA</label>
+                                <input type="text" id="addTelepon" class="form-control" placeholder="08xxxxxxxxxx" required>
                             </div>
                         </div>
                     </div>
@@ -254,7 +233,7 @@
                 </div>
                 <form id="formEditMhs">
                     <div class="modal-body p-4">
-                        <input type="hidden" id="editIndex">
+                        <input type="hidden" id="editId">
                         <div class="form-row mb-3">
                             <div class="form-group col-md-6">
                                 <label class="small font-weight-bold">NIM</label>
@@ -267,38 +246,29 @@
                         </div>
                         <div class="form-row mb-3">
                             <div class="form-group col-md-6">
-                                <label class="small font-weight-bold">Program Studi</label>
-                                <select id="editProdi" class="custom-select" required>
-                                    <option value="Teknik Informatika">Teknik Informatika (S1)</option>
-                                    <option value="Sistem Informasi">Sistem Informasi (S1)</option>
-                                    <option value="Teknologi Informasi">Teknologi Informasi (D3)</option>
-                                    <option value="Sains Data">Sains Data (S1)</option>
+                                <label class="small font-weight-bold">Jurusan</label>
+                                <select id="editJurusan" class="custom-select" required>
+                                    <option value="Teknik Informatika">Teknik Informatika</option>
+                                    <option value="Sains Data">Sains Data</option>
+                                    <option value="Teknik Komputer">Teknik Komputer</option>
+                                    <option value="Rekayasa Perangkat Lunak">Rekayasa Perangkat Lunak</option>
+                                    <option value="Robotika">Robotika</option>
+                                    <option value="TRPL">TRPL</option>
                                 </select>
                             </div>
                             <div class="form-group col-md-6">
                                 <label class="small font-weight-bold">Angkatan</label>
-                                <select id="editAngkatan" class="custom-select" required>
-                                    <option value="2025">2025</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2022">2022</option>
-                                </select>
+                                <input type="number" id="editAngkatan" class="form-control" required>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label class="small font-weight-bold">Jenis Kelamin</label>
-                                <select id="editJk" class="custom-select" required>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
+                                <label class="small font-weight-bold">Email</label>
+                                <input type="email" id="editEmail" class="form-control" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label class="small font-weight-bold">Status</label>
-                                <select id="editStatusMhs" class="custom-select" required>
-                                    <option value="Aktif">Aktif</option>
-                                    <option value="Cuti">Cuti</option>
-                                </select>
+                                <label class="small font-weight-bold">Nomor Telepon</label>
+                                <input type="text" id="editTelepon" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -315,18 +285,16 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- SCRIPT CRUD MAHASISWA -->
-     <script>
-        // ENDPOINT API MAHASISWA
+    <!-- SCRIPT CRUD (DUAL MODE: JSON & FORMDATA DENGAN NOTIFIKASI ASLI) -->
+    <script>
         const API_MHS_READ   = "https://api.melangkah.my.id/mahasiswa/read.php";
         const API_MHS_CREATE = "https://api.melangkah.my.id/mahasiswa/create.php";
         const API_MHS_UPDATE = "https://api.melangkah.my.id/mahasiswa/update.php";
         const API_MHS_DELETE = "https://api.melangkah.my.id/mahasiswa/delete.php";
-        const API_MHS_DETAIL = "https://api.melangkah.my.id/mahasiswa/detail.php";
 
         let listMahasiswa = [];
 
-        // 1. READ MAHASISWA DARI API
+        // 1. READ MAHASISWA DARI SERVER
         function loadDataMahasiswa() {
             fetch(API_MHS_READ)
                 .then(res => res.json())
@@ -335,41 +303,33 @@
                     renderMahasiswa(listMahasiswa);
                 })
                 .catch(err => {
-                    console.warn("Gagal memuat API Mahasiswa:", err);
-                    renderMahasiswa(listMahasiswa);
+                    console.error("Gagal load API:", err);
                 });
         }
 
-        // TAMPILKAN TABEL (Membaca fleksibel agar tidak 'undefined')
         function renderMahasiswa(data) {
             let html = "";
             if (!data || data.length === 0) {
                 html = `<tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data mahasiswa. Silakan tambah data baru.</td></tr>`;
             } else {
                 data.forEach((mhs, idx) => {
-                    // Mencegah 'undefined' jika field database memiliki penamaan alternatif
-                    const nim     = mhs.nim || mhs.nim_mahasiswa || "-";
-                    const nama    = mhs.nama || mhs.nama_mahasiswa || "-";
-                    const prodi   = mhs.prodi || mhs.program_studi || mhs.jurusan || "Teknik Informatika";
-                    const angkatan = mhs.angkatan || mhs.tahun_masuk || "2023";
-                    const jk      = mhs.jk || mhs.jenis_kelamin || "Laki-laki";
-                    const status  = mhs.status || mhs.status_mahasiswa || "Aktif";
-
-                    const badge = status.toLowerCase() === "aktif" ? "badge-aktif" : "badge-cuti";
-
                     html += `
                         <tr>
                             <td class="text-center">${idx + 1}</td>
-                            <td><span class="badge-nim">${nim}</span></td>
-                            <td class="font-weight-bold text-dark">${nama}</td>
-                            <td>${prodi}</td>
-                            <td>${angkatan}</td>
-                            <td>${jk}</td>
-                            <td><span class="badge-status ${badge}">${status}</span></td>
+                            <td><span class="badge-nim">${mhs.nim}</span></td>
+                            <td class="font-weight-bold text-dark">${mhs.nama}</td>
+                            <td>${mhs.jurusan || '-'}</td>
+                            <td>${mhs.angkatan || '-'}</td>
+                            <td>${mhs.email || '-'}</td>
+                            <td>${mhs.telepon || '-'}</td>
                             <td class="text-center">
                                 <div class="action-container">
-                                    <button type="button" class="btn-action-edit" title="Edit" onclick="openEdit(${mhs.id || idx})"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn-action-delete" title="Hapus" onclick="hapusMahasiswa(${mhs.id || idx})"><i class="fas fa-trash-alt"></i></button>
+                                    <button type="button" class="btn-action-edit" title="Edit" onclick="openEdit(${idx})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn-action-delete" title="Hapus" onclick="hapusMahasiswa('${mhs.id}')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -379,114 +339,119 @@
             $("#tbodyMahasiswa").html(html);
         }
 
-        // 2. CREATE MAHASISWA KE API (POST)
-        $("#formTambahMhs").on("submit", function (e) {
+        // FUNGSI PENGIRIM KEBAL APAPUN TIPE API-NYA (Coba FormData & JSON)
+        async function kirimDataKeApi(url, payload) {
+            // Cara 1: Coba kirim format FormData (Format umum PHP $_POST)
+            let fd = new FormData();
+            for (let k in payload) {
+                fd.append(k, payload[k]);
+            }
+
+            let respon = await fetch(url, { method: "POST", body: fd });
+            let teks = await respon.text();
+
+            // Jika server menolak FormData atau mengembalikan null/kosong, coba cara 2 (JSON)
+            if (teks.includes("kosong") || teks.includes("null") || teks.includes("wajib") || teks.includes("gagal")) {
+                let responJson = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                teks = await responJson.text();
+            }
+
+            return teks;
+        }
+
+        // 2. CREATE MAHASISWA
+        $("#formTambahMhs").on("submit", async function (e) {
             e.preventDefault();
+
             const payload = {
-                nim: $("#addNim").val(),
-                nama: $("#addNama").val(),
-                prodi: $("#addProdi").val(),
+                nim: $("#addNim").val().trim(),
+                nama: $("#addNama").val().trim(),
+                jurusan: $("#addJurusan").val(),
                 angkatan: $("#addAngkatan").val(),
-                jk: $("#addJk").val(),
-                status: $("#addStatusMhs").val()
+                email: $("#addEmail").val().trim(),
+                telepon: $("#addTelepon").val().trim()
             };
 
-            let fd = new FormData();
-            for (let key in payload) { fd.append(key, payload[key]); }
+            try {
+                const balasan = await kirimDataKeApi(API_MHS_CREATE, payload);
+                console.log("Respon Create:", balasan);
 
-            fetch(API_MHS_CREATE, {
-                method: "POST",
-                body: fd
-            })
-            .then(res => res.json())
-            .then(() => {
+                // Tampilkan respon ASLI dari server
+                alert("Balasan Server:\n" + balasan);
+
                 $("#modalTambahMhs").modal("hide");
                 $("#formTambahMhs")[0].reset();
                 loadDataMahasiswa();
-                alert("Data Mahasiswa Berhasil Disimpan ke Server!");
-            })
-            .catch(() => {
-                // Simpan lokal jika API belum aktif
-                payload.id = Date.now();
-                listMahasiswa.push(payload);
-                renderMahasiswa(listMahasiswa);
-                $("#modalTambahMhs").modal("hide");
-                alert("Data Mahasiswa Berhasil Ditambahkan!");
-            });
+            } catch (err) {
+                alert("Koneksi gagal: " + err.message);
+            }
         });
 
-        // 3. EDIT MAHASISWA KE API (UPDATE)
-        function openEdit(id) {
-            const mhs = listMahasiswa.find(m => (m.id == id || m.nim == id)) || listMahasiswa[id];
-            if (mhs) {
-                $("#editIndex").val(mhs.id || id);
-                $("#editNim").val(mhs.nim || mhs.nim_mahasiswa);
-                $("#editNama").val(mhs.nama || mhs.nama_mahasiswa);
-                $("#editProdi").val(mhs.prodi || mhs.program_studi || "Teknik Informatika");
-                $("#editAngkatan").val(mhs.angkatan || "2023");
-                $("#editJk").val(mhs.jk || mhs.jenis_kelamin || "Laki-laki");
-                $("#editStatusMhs").val(mhs.status || "Aktif");
-                $("#modalEditMhs").modal("show");
-            }
+        // 3. EDIT MAHASISWA
+        function openEdit(index) {
+            const mhs = listMahasiswa[index];
+            if (!mhs) return;
+
+            $("#editId").val(mhs.id);
+            $("#editNim").val(mhs.nim);
+            $("#editNama").val(mhs.nama);
+            $("#editJurusan").val(mhs.jurusan);
+            $("#editAngkatan").val(mhs.angkatan);
+            $("#editEmail").val(mhs.email);
+            $("#editTelepon").val(mhs.telepon);
+
+            $("#modalEditMhs").modal("show");
         }
 
-        $("#formEditMhs").on("submit", function (e) {
+        $("#formEditMhs").on("submit", async function (e) {
             e.preventDefault();
-            const id = $("#editIndex").val();
-            const updated = {
+            const id = $("#editId").val();
+
+            const payload = {
                 id: id,
-                nim: $("#editNim").val(),
-                nama: $("#editNama").val(),
-                prodi: $("#editProdi").val(),
+                nim: $("#editNim").val().trim(),
+                nama: $("#editNama").val().trim(),
+                jurusan: $("#editJurusan").val(),
                 angkatan: $("#editAngkatan").val(),
-                jk: $("#editJk").val(),
-                status: $("#editStatusMhs").val()
+                email: $("#editEmail").val().trim(),
+                telepon: $("#editTelepon").val().trim()
             };
 
-            let fd = new FormData();
-            for (let key in updated) { fd.append(key, updated[key]); }
+            try {
+                const balasan = await kirimDataKeApi(`${API_MHS_UPDATE}?id=${id}`, payload);
+                console.log("Respon Update:", balasan);
 
-            fetch(`${API_MHS_UPDATE}?id=${id}`, {
-                method: "POST",
-                body: fd
-            })
-            .then(res => res.json())
-            .then(() => {
+                alert("Balasan Server:\n" + balasan);
+
                 $("#modalEditMhs").modal("hide");
                 loadDataMahasiswa();
-                alert("Data Mahasiswa Berhasil Diperbarui!");
-            })
-            .catch(() => {
-                const idx = listMahasiswa.findIndex(m => m.id == id || m.nim == updated.nim);
-                if (idx !== -1) {
-                    listMahasiswa[idx] = { ...listMahasiswa[idx], ...updated };
-                    renderMahasiswa(listMahasiswa);
-                }
-                $("#modalEditMhs").modal("hide");
-                alert("Data Mahasiswa Berhasil Diperbarui!");
-            });
+            } catch (err) {
+                alert("Koneksi gagal: " + err.message);
+            }
         });
 
-        // 4. DELETE MAHASISWA KE API
-        function hapusMahasiswa(id) {
-            if (confirm("Apakah Anda yakin ingin menghapus data mahasiswa ini?")) {
-                let fd = new FormData();
-                fd.append("id", id);
+        // 4. DELETE MAHASISWA
+        async function hapusMahasiswa(id) {
+            if (confirm("Yakin ingin menghapus data dengan ID: " + id + " dari server?")) {
+                try {
+                    let fd = new FormData();
+                    fd.append("id", id);
 
-                fetch(`${API_MHS_DELETE}?id=${id}`, {
-                    method: "POST",
-                    body: fd
-                })
-                .then(res => res.json())
-                .then(() => {
+                    const respon = await fetch(`${API_MHS_DELETE}?id=${id}`, {
+                        method: "POST",
+                        body: fd
+                    });
+                    const balasan = await respon.text();
+
+                    alert("Balasan Server:\n" + balasan);
                     loadDataMahasiswa();
-                    alert("Data Mahasiswa Berhasil Dihapus!");
-                })
-                .catch(() => {
-                    listMahasiswa = listMahasiswa.filter(m => m.id != id);
-                    renderMahasiswa(listMahasiswa);
-                    alert("Data Mahasiswa Berhasil Dihapus!");
-                });
+                } catch (err) {
+                    alert("Gagal hapus: " + err.message);
+                }
             }
         }
 

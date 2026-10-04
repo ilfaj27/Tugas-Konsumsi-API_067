@@ -45,20 +45,28 @@
         display: inline-block;
       }
 
+      .badge-nim {
+        background-color: #f8fafc;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        display: inline-block;
+      }
+
       .badge-status {
         border-radius: 20px;
-        padding: 4px 14px;
+        padding: 4px 12px;
         font-size: 0.75rem;
         font-weight: 700;
         color: white;
         display: inline-block;
       }
-      .status-pinjam {
-        background-color: #f59e0b;
-      }
-      .status-kembali {
-        background-color: #10b981;
-      }
+      .status-pinjam   { background-color: #f59e0b; }
+      .status-kembali  { background-color: #10b981; }
+      .status-pending  { background-color: #6366f1; }
 
       .btn-action-print {
         width: 32px;
@@ -83,42 +91,41 @@
         color: #ffffff;
       }
 
-      /* CSS KHUSUS CETAK SLIP */
-    @media print {
-        /* Sembunyikan seluruh isi website */
-        body * {
-            visibility: hidden;
-        }
-
-        /* Tampilkan HANYA isi bukti slip peminjaman */
-        #isiSlip, #isiSlip * {
-            visibility: visible;
-        }
-
-        /* Atur posisi slip tepat di tengah halaman kertas */
-        #isiSlip {
-            position: absolute;
-            left: 50%;
-            top: 40px;
-            transform: translateX(-50%);
-            width: 480px;
-            border: 2px dashed #444;
-            padding: 25px;
-            border-radius: 8px;
-            background: #ffffff;
-        }
-
-        /* Hilangkan efek gelap (backdrop) modal */
-        .modal-backdrop {
+      /* CSS CETAK SLIP */
+      @media print {
+        #wrapper, 
+        .modal-backdrop, 
+        .modal-footer, 
+        .modal-header {
             display: none !important;
         }
-    }
+
+        #modalSlip {
+            display: block !important;
+            position: static !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            opacity: 1 !important;
+        }
+
+        #modalSlip .modal-dialog {
+            margin: 30px auto !important;
+            width: 480px !important;
+            max-width: 480px !important;
+        }
+
+        #modalSlip .modal-content {
+            border: 2px dashed #222 !important;
+            box-shadow: none !important;
+            background: #ffffff !important;
+        }
+      }
     </style>
   </head>
 
   <body id="page-top">
     <div id="wrapper">
-      <!-- Sidebar -->
+      <!-- Sidebar ASLI LENGKAP -->
       <ul
         class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
         id="accordionSidebar"
@@ -225,19 +232,19 @@
               </button>
             </div>
 
-            <!-- 1. TABEL TRANSAKSI PEMINJAMAN -->
+            <!-- TABEL TRANSAKSI PEMINJAMAN -->
             <div class="card shadow mb-4 border-0">
               <div
                 class="card-header py-3 bg-white d-flex justify-content-between align-items-center"
               >
                 <h6 class="m-0 font-weight-bold text-primary">
-                  Rekapitulasi Peminjaman Asset
+                  Daftar Peminjaman Asset (Dari API Server)
                 </h6>
                 <button
                   class="btn btn-sm btn-outline-primary"
-                  onclick="initPage()"
+                  onclick="loadPeminjaman()"
                 >
-                  <i class="fas fa-sync-alt mr-1"></i> Refresh
+                  <i class="fas fa-sync-alt mr-1"></i> Refresh Data
                 </button>
               </div>
               <div class="card-body">
@@ -251,18 +258,19 @@
                     <thead class="thead-siakad">
                       <tr>
                         <th class="text-center" style="width: 5%">No</th>
-                        <th style="width: 14%">Kode TRX</th>
+                        <th style="width: 10%">ID Pinjam</th>
+                        <th style="width: 18%">Mahasiswa</th>
+                        <th style="width: 14%">Jurusan</th>
+                        <th style="width: 20%">Asset Dipinjam</th>
+                        <th class="text-center" style="width: 7%">Qty</th>
                         <th style="width: 12%">Tgl Pinjam</th>
-                        <th style="width: 12%">NIM</th>
-                        <th style="width: 18%">Nama Mahasiswa</th>
-                        <th style="width: 22%">Asset yang Dipinjam</th>
-                        <th style="width: 12%">Batas Kembali</th>
+                        <th style="width: 12%">Tgl Kembali</th>
                         <th class="text-center" style="width: 10%">Status</th>
-                        <th class="text-center" style="width: 8%">Slip</th>
+                        <th class="text-center" style="width: 6%">Slip</th>
                       </tr>
                     </thead>
                     <tbody id="tbodyPinjam">
-                      <!-- Dimuat secara dinamis oleh JavaScript -->
+                      <!-- Dimuat oleh JavaScript -->
                     </tbody>
                   </table>
                 </div>
@@ -281,7 +289,7 @@
       </div>
     </div>
 
-    <!-- 2. MODAL FORM PEMINJAMAN -->
+    <!-- MODAL FORM PEMINJAMAN -->
     <div
       class="modal fade"
       id="modalInputPinjam"
@@ -293,8 +301,7 @@
         <div class="modal-content border-0 shadow">
           <div class="modal-header modal-header-primary">
             <h5 class="modal-title font-weight-bold">
-              <i class="fas fa-file-signature mr-2"></i> Form Input Peminjaman
-              Asset
+              <i class="fas fa-file-signature mr-2"></i> Form Input Peminjaman Asset
             </h5>
             <button class="close text-white" type="button" data-dismiss="modal">
               &times;
@@ -303,34 +310,43 @@
           <form id="formPeminjaman">
             <div class="modal-body p-4">
               <div class="form-row mb-3">
-                <!-- Dropdown Mahasiswa Dinamis -->
+                <!-- Dropdown Mahasiswa -->
                 <div class="form-group col-md-6">
                   <label class="small font-weight-bold text-gray-700"
                     >Pilih Mahasiswa Peminjam</label
                   >
                   <select id="pinjamMhs" class="custom-select" required>
-                    <option value="" selected>
-                      -- Memuat data mahasiswa... --
-                    </option>
+                    <option value="" selected>-- Memuat data mahasiswa... --</option>
                   </select>
                 </div>
-                <!-- Dropdown Asset Dinamis (Tulisan [AST] Sudah Dihilangkan) -->
+                <!-- Dropdown Asset -->
                 <div class="form-group col-md-6">
                   <label class="small font-weight-bold text-gray-700"
                     >Pilih Asset</label
                   >
                   <select id="pinjamAsset" class="custom-select" required>
-                    <option value="" selected>
-                      -- Memuat data asset... --
-                    </option>
+                    <option value="" selected>-- Memuat data asset... --</option>
                   </select>
                 </div>
               </div>
 
               <div class="form-row mb-3">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                   <label class="small font-weight-bold text-gray-700"
-                    >Tanggal Peminjaman</label
+                    >Jumlah Pinjam (Qty)</label
+                  >
+                  <input
+                    type="number"
+                    id="addJumlah"
+                    class="form-control"
+                    min="1"
+                    value="1"
+                    required
+                  />
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="small font-weight-bold text-gray-700"
+                    >Tanggal Pinjam</label
                   >
                   <input
                     type="date"
@@ -339,9 +355,9 @@
                     required
                   />
                 </div>
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                   <label class="small font-weight-bold text-gray-700"
-                    >Batas Tanggal Pengembalian</label
+                    >Tanggal Pengembalian</label
                   >
                   <input
                     type="date"
@@ -352,16 +368,29 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <label class="small font-weight-bold text-gray-700"
-                  >Keperluan / Keterangan</label
-                >
-                <textarea
-                  id="keperluan"
-                  class="form-control"
-                  rows="2"
-                  placeholder="Contoh: Kegiatan Praktikum Seminar"
-                ></textarea>
+              <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                  <label class="small font-weight-bold text-gray-700"
+                    >Status Peminjaman</label
+                  >
+                  <select id="addStatusPinjam" class="custom-select" required>
+                    <option value="Dipinjam" selected>Dipinjam</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Dikembalikan">Dikembalikan</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="small font-weight-bold text-gray-700"
+                    >Keperluan / Keterangan</label
+                  >
+                  <input
+                    type="text"
+                    id="addKeterangan"
+                    class="form-control"
+                    placeholder="Contoh: Praktikum Tugas Akhir"
+                    required
+                  />
+                </div>
               </div>
             </div>
             <div class="modal-footer bg-light">
@@ -376,7 +405,7 @@
                 class="btn btn-primary px-4 font-weight-bold"
                 type="submit"
               >
-                <i class="fas fa-save mr-1"></i> Simpan Transaksi
+                <i class="fas fa-save mr-1"></i> Simpan Peminjaman
               </button>
             </div>
           </form>
@@ -423,262 +452,254 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- SCRIPT LOGIKA & SINKRONISASI ASSET -->
+    <!-- SCRIPT CRUD PEMINJAMAN SINKRON PENUH KE API -->
     <script>
-      const API_READ_ASSET = "https://api.melangkah.my.id/asset/read.php";
-      const API_UPDATE_ASSET = "https://api.melangkah.my.id/asset/update.php";
-      const API_PEMINJAMAN_READ =
-        "https://api.melangkah.my.id/peminjaman/read.php";
-      const API_PEMINJAMAN_CREATE =
-        "https://api.melangkah.my.id/peminjaman/create.php";
-      const STORAGE_TRX_KEY = "SIAKAD_TRANSAKSI_DATA";
-      const STORAGE_ASSET_KEY = "SIAKAD_ASSET_DATA";
-      const STORAGE_MHS_KEY = "SIAKAD_MHS_DATA";
+      const API_PEMINJAMAN_READ   = "https://api.melangkah.my.id/peminjaman/read.php";
+      const API_PEMINJAMAN_CREATE = "https://api.melangkah.my.id/peminjaman/create.php";
+      const API_MHS_READ          = "https://api.melangkah.my.id/mahasiswa/read.php";
+      const API_ASSET_READ        = "https://api.melangkah.my.id/asset/read.php";
 
-      let dataTransaksi = [];
-      let dataAssetList = [];
+      let listPeminjaman = [];
+      let listMahasiswa  = [];
+      let listAsset      = [];
 
-      // 1. LOAD PILIHAN MAHASISWA
+      // 1. LOAD DROPDOWN MAHASISWA DARI API
       function loadMhsOptions() {
-        let mhsList = [];
-        const rawMhs = localStorage.getItem(STORAGE_MHS_KEY);
-        if (rawMhs) {
-          try {
-            mhsList = JSON.parse(rawMhs);
-          } catch (e) {}
-        }
-
-        if (!mhsList || mhsList.length === 0) {
-          mhsList = [
-            { nim: "230101001", nama: "Aditya Pratama" },
-            { nim: "230101002", nama: "Siti Nurhaliza" },
-            { nim: "230102001", nama: "Bagas Rahadian" },
-            { nim: "230103001", nama: "Dewi Anggraini" },
-          ];
-          localStorage.setItem(STORAGE_MHS_KEY, JSON.stringify(mhsList));
-        }
-
-        let opt = `<option value="">-- Pilih Mahasiswa --</option>`;
-        mhsList.forEach((m) => {
-          opt += `<option value="${m.nim}|${m.nama}">${m.nim} - ${m.nama}</option>`;
-        });
-        $("#pinjamMhs").html(opt);
-      }
-
-      // 2. LOAD ASSET DARI STORAGE / API
-      function loadAssetOptions() {
-        const localAsset = localStorage.getItem(STORAGE_ASSET_KEY);
-        if (localAsset) {
-          try {
-            dataAssetList = JSON.parse(localAsset);
-            renderAssetDropdown(dataAssetList);
-            return;
-          } catch (e) {}
-        }
-
-        fetch(API_READ_ASSET)
-          .then((res) => res.json())
-          .then((data) => {
-            dataAssetList = Array.isArray(data) ? data : data.data || [];
-            renderAssetDropdown(dataAssetList);
+        fetch(API_MHS_READ)
+          .then(res => res.json())
+          .then(data => {
+            listMahasiswa = Array.isArray(data) ? data : (data.data || []);
+            let opt = `<option value="">-- Pilih Mahasiswa --</option>`;
+            listMahasiswa.forEach(m => {
+              // Simpan data lengkap mhs dalam format JSON di attribute value
+              const mhsJson = JSON.stringify({
+                id: m.id,
+                nim: m.nim,
+                nama: m.nama,
+                jurusan: m.jurusan
+              });
+              opt += `<option value='${mhsJson}'>${m.nim} - ${m.nama} (${m.jurusan})</option>`;
+            });
+            $("#pinjamMhs").html(opt);
           })
-          .catch(() => {
-            $("#pinjamAsset").html(
-              `<option value="">Gagal memuat asset</option>`,
-            );
+          .catch(err => {
+            console.warn("Gagal load mahasiswa:", err);
+            $("#pinjamMhs").html(`<option value="">Gagal memuat mahasiswa</option>`);
           });
       }
 
-      // Fungsi render opsi asset
-      function renderAssetDropdown(list) {
-        let opt = `<option value="">-- Pilih Asset --</option>`;
-        list.forEach((a) => {
-          const id = a.id || a.id_asset;
-          const nama = a.nama_asset || a.nama || "Asset";
-          const status = a.status || "Tersedia";
-          const isTersedia = status.toLowerCase() === "tersedia";
+      // 2. LOAD DROPDOWN ASSET DARI API
+      function loadAssetOptions() {
+        fetch(API_ASSET_READ)
+          .then(res => res.json())
+          .then(data => {
+            listAsset = Array.isArray(data) ? data : (data.data || []);
+            renderAssetDropdown(listAsset);
+          })
+          .catch(() => {
+            // Fallback jika API Asset belum dibuat
+            renderAssetDropdown([
+              { id: "1", nama_asset: "Proyektor Epson EB-X400", kategori_asset: "Elektronik" },
+              { id: "7", nama_asset: "Laptop Asus ROG", kategori_asset: "Elektronik" },
+              { id: "28", nama_asset: "Kamera", kategori_asset: "Elektronik" },
+              { id: "30", nama_asset: "TV Samsung Tendik", kategori_asset: "Elektronik" },
+              { id: "31", nama_asset: "Laptop Asus ROG baur", kategori_asset: "Elektronik" }
+            ]);
+          });
+      }
 
-          // Menampilkan murni nama asset dan statusnya saja
-          opt += `<option value="${id}" ${isTersedia ? "" : "disabled"}>
-                    ${nama} - (${status})
-                </option>`;
+      function renderAssetDropdown(arr) {
+        let opt = `<option value="">-- Pilih Asset --</option>`;
+        arr.forEach(a => {
+          const assetJson = JSON.stringify({
+            id: a.id || a.id_asset,
+            nama: a.nama_asset || a.nama,
+            kategori: a.kategori_asset || a.kategori || "Elektronik"
+          });
+          opt += `<option value='${assetJson}'>${a.nama_asset || a.nama} - (${a.kategori_asset || a.kategori || 'Elektronik'})</option>`;
         });
         $("#pinjamAsset").html(opt);
       }
 
-      // 3. LOAD DATA TRANSAKSI
-      function loadTransaksi() {
+      // 3. LOAD DATA PEMINJAMAN DARI API
+      function loadPeminjaman() {
         fetch(API_PEMINJAMAN_READ)
-          .then((res) => res.json())
-          .then((data) => {
-            dataTransaksi = Array.isArray(data) ? data : data.data || [];
-            renderTableTransaksi();
+          .then(res => res.json())
+          .then(data => {
+            listPeminjaman = Array.isArray(data) ? data : (data.data || []);
+            renderTablePeminjaman(listPeminjaman);
           })
-          .catch(() => {
-            // Cadangan jika server offline
-            const rawTrx = localStorage.getItem(STORAGE_TRX_KEY);
-            dataTransaksi = rawTrx ? JSON.parse(rawTrx) : [];
-            renderTableTransaksi();
+          .catch(err => {
+            console.error("Gagal load peminjaman:", err);
+            $("#tbodyPinjam").html(`<tr><td colspan="10" class="text-center text-danger py-4">Gagal memuat data dari server peminjaman.</td></tr>`);
           });
       }
 
-      function renderTableTransaksi() {
+      // 4. RENDER TABEL PEMINJAMAN
+      function renderTablePeminjaman(data) {
         let html = "";
-        if (dataTransaksi.length === 0) {
-          html = `<tr><td colspan="9" class="text-center text-muted py-4">Belum ada riwayat transaksi peminjaman.</td></tr>`;
+        if (!data || data.length === 0) {
+          html = `<tr><td colspan="10" class="text-center text-muted py-4">Belum ada riwayat peminjaman.</td></tr>`;
         } else {
-          dataTransaksi.forEach((trx, idx) => {
-            const isPinjam = trx.status === "Dipinjam";
-            const badgeClass = isPinjam ? "status-pinjam" : "status-kembali";
+          data.forEach((p, idx) => {
+            const idPinjam = p.id_peminjaman || (idx + 1);
+            const status   = p.status_peminjaman || "Dipinjam";
+
+            let badgeClass = "status-pinjam";
+            if (status.toLowerCase() === "dikembalikan") badgeClass = "status-kembali";
+            if (status.toLowerCase() === "pending") badgeClass = "status-pending";
+
             html += `
-                        <tr>
-                            <td class="text-center">${idx + 1}</td>
-                            <td><span class="badge-trx">${trx.kode}</span></td>
-                            <td>${trx.tglPinjam}</td>
-                            <td>${trx.nim}</td>
-                            <td class="font-weight-bold text-dark">${trx.nama}</td>
-                            <td>${trx.asset}</td>
-                            <td>${trx.tglKembali}</td>
-                            <td class="text-center"><span class="badge-status ${badgeClass}">${trx.status}</span></td>
-                            <td class="text-center">
-                                <button type="button" class="btn-action-print" title="Cetak Slip" onclick="cetakSlip(${idx})">
-                                    <i class="fas fa-print"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+              <tr>
+                <td class="text-center">${idx + 1}</td>
+                <td><span class="badge-trx">PMJ-${idPinjam}</span></td>
+                <td>
+                  <div class="font-weight-bold text-dark">${p.nama_mahasiswa}</div>
+                  <span class="badge-nim">${p.nim}</span>
+                </td>
+                <td>${p.jurusan || '-'}</td>
+                <td>
+                  <div class="font-weight-bold text-dark">${p.nama_asset}</div>
+                  <small class="text-muted">${p.kategori_asset || ''}</small>
+                </td>
+                <td class="text-center font-weight-bold">${p.jumlah || 1}</td>
+                <td>${p.tanggal_pinjam || '-'}</td>
+                <td>${p.tanggal_kembali || '-'}</td>
+                <td class="text-center"><span class="badge-status ${badgeClass}">${status}</span></td>
+                <td class="text-center">
+                  <button type="button" class="btn-action-print" title="Cetak Slip" onclick="cetakSlip(${idx})">
+                    <i class="fas fa-print"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
           });
         }
         $("#tbodyPinjam").html(html);
       }
 
-      // 4. SIMPAN TRANSAKSI & UBAH STATUS ASSET DI MASTER DATA
-      $("#formPeminjaman").on("submit", function (e) {
-        e.preventDefault();
-        const mhsData = $("#pinjamMhs").val().split("|");
-        const selectedAssetId = $("#pinjamAsset").val();
-
-        // Cari objek asset berdasarkan ID yang dipilih
-        const assetObj = dataAssetList.find(
-          (a) => a.id == selectedAssetId || a.id_asset == selectedAssetId,
-        );
-        if (!assetObj) {
-          alert("Silakan pilih asset yang valid!");
-          return;
+      // FUNGSI PENGIRIM KE API (DUAL MODE)
+      async function kirimKeApiPeminjaman(url, payload) {
+        let fd = new FormData();
+        for (let k in payload) {
+          fd.append(k, payload[k]);
         }
 
-        const newTrx = {
-          kode: "TRP-" + Math.floor(100000 + Math.random() * 900000),
-          tglPinjam: $("#tglPinjam").val(),
-          nim: mhsData[0],
-          nama: mhsData[1],
-          id_asset: selectedAssetId,
-          asset: assetObj.nama_asset || assetObj.nama,
-          tglKembali: $("#tglKembali").val(),
-          status: "Dipinjam",
+        let res = await fetch(url, { method: "POST", body: fd });
+        let text = await res.text();
+
+        if (text.includes("kosong") || text.includes("null") || text.includes("wajib")) {
+          let resJson = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          text = await resJson.text();
+        }
+
+        return text;
+      }
+
+      // 5. SIMPAN PEMINJAMAN (CREATE)
+      $("#formPeminjaman").on("submit", async function (e) {
+        e.preventDefault();
+
+        // Ambil objek JSON yang tersimpan di select dropdown
+        const selectedMhs = JSON.parse($("#pinjamMhs").val());
+        const selectedAsset = JSON.parse($("#pinjamAsset").val());
+
+        // Field payload 100% PERSIS sesuai schema API di screenshot
+        const payload = {
+          id_mahasiswa: selectedMhs.id,
+          nim: selectedMhs.nim,
+          nama_mahasiswa: selectedMhs.nama,
+          jurusan: selectedMhs.jurusan,
+          id_asset: selectedAsset.id,
+          nama_asset: selectedAsset.nama,
+          kategori_asset: selectedAsset.kategori,
+          jumlah: $("#addJumlah").val(),
+          tanggal_pinjam: $("#tglPinjam").val(),
+          tanggal_kembali: $("#tglKembali").val(),
+          keterangan: $("#addKeterangan").val(),
+          status_peminjaman: $("#addStatusPinjam").val()
         };
 
-        // 1. Simpan Transaksi Baru ke LocalStorage
-        dataTransaksi.unshift(newTrx);
-        localStorage.setItem(STORAGE_TRX_KEY, JSON.stringify(dataTransaksi));
+        try {
+          const balasan = await kirimKeApiPeminjaman(API_PEMINJAMAN_CREATE, payload);
+          console.log("Respon Create Peminjaman:", balasan);
 
-        let fdPeminjaman = new FormData();
-        fdPeminjaman.append("kode_transaksi", newTrx.kode);
-        fdPeminjaman.append("tgl_pinjam", newTrx.tglPinjam);
-        fdPeminjaman.append("nim", newTrx.nim);
-        fdPeminjaman.append("nama_mahasiswa", newTrx.nama);
-        fdPeminjaman.append("id_asset", selectedAssetId);
-        fdPeminjaman.append("nama_asset", newTrx.asset);
-        fdPeminjaman.append("tgl_kembali", newTrx.tglKembali);
-        fdPeminjaman.append("status", "Dipinjam");
+          alert("Balasan Server:\n" + balasan);
 
-        fetch(API_PEMINJAMAN_CREATE, {
-          method: "POST",
-          body: fdPeminjaman,
-        }).catch((err) =>
-          console.log("Gagal kirim peminjaman ke server:", err),
-        );
+          $("#modalInputPinjam").modal("hide");
+          $("#formPeminjaman")[0].reset();
+          initDate();
+          loadPeminjaman();
 
-        // 2. UBAH STATUS ASSET MENJADI "Dipinjam" DI STORAGE MASTER ASSET
-        const assetIdx = dataAssetList.findIndex(
-          (a) => a.id == selectedAssetId || a.id_asset == selectedAssetId,
-        );
-        if (assetIdx !== -1) {
-          dataAssetList[assetIdx].status = "Dipinjam";
-          // Simpan perubahan ke storage agar Master Data Asset & Dashboard otomatis ikut berubah
-          localStorage.setItem(
-            STORAGE_ASSET_KEY,
-            JSON.stringify(dataAssetList),
-          );
-
-          // Kirim perubahan status ke server update.php
-          let fd = new FormData();
-          fd.append("id", selectedAssetId);
-          fd.append(
-            "kode_asset",
-            dataAssetList[assetIdx].kode_asset ||
-              dataAssetList[assetIdx].kode ||
-              "",
-          );
-          fd.append(
-            "nama_asset",
-            dataAssetList[assetIdx].nama_asset || dataAssetList[assetIdx].nama,
-          );
-          fd.append(
-            "kategori",
-            dataAssetList[assetIdx].kategori || "Elektronik",
-          );
-          fd.append("kondisi", dataAssetList[assetIdx].kondisi || "Baik");
-          fd.append("status", "Dipinjam");
-
-          fetch(`${API_UPDATE_ASSET}?id=${selectedAssetId}`, {
-            method: "POST",
-            body: fd,
-          }).catch((err) => console.log("Update offline"));
+        } catch (err) {
+          alert("Gagal menyimpan peminjaman: " + err.message);
         }
-
-        // 3. Render Ulang Tabel & Dropdown
-        renderTableTransaksi();
-        renderAssetDropdown(dataAssetList);
-
-        $("#modalInputPinjam").modal("hide");
-        this.reset();
-        alert("Transaksi berhasil disimpan!");
       });
 
-      // 5. CETAK SLIP PEMINJAMAN
+      // 6. CETAK SLIP PEMINJAMAN
       function cetakSlip(idx) {
-        const trx = dataTransaksi[idx];
+        const p = listPeminjaman[idx];
+        if (!p) return;
+
         const content = `
-                <div class="text-center mb-3">
-                    <h5 class="font-weight-bold text-dark mb-0">BUKTI PEMINJAMAN ASSET</h5>
-                    <p class="small text-muted">SISTEM INFORMASI LOGISTIK KAMPUS</p>
-                    <span class="badge-trx">${trx.kode}</span>
+            <div class="text-center mb-3">
+                <h5 class="font-weight-bold text-dark mb-0">BUKTI PEMINJAMAN ASSET KAMPUS</h5>
+                <p class="small text-muted">SISTEM INFORMASI AKADEMIK & LOGISTIK</p>
+                <span class="badge-trx">NO BUKTI: PMJ-${p.id_peminjaman}</span>
+            </div>
+            <table class="table table-sm table-borderless small mb-2">
+                <tr><td width="38%">NIM Mahasiswa</td><td>: <strong>${p.nim}</strong></td></tr>
+                <tr><td>Nama Mahasiswa</td><td>: <strong>${p.nama_mahasiswa}</strong></td></tr>
+                <tr><td>Jurusan</td><td>: ${p.jurusan}</td></tr>
+                <tr class="border-top"><td colspan="2" class="pt-2"></td></tr>
+                <tr><td>Asset Dipinjam</td><td>: <strong>${p.nama_asset}</strong></td></tr>
+                <tr><td>Kategori Asset</td><td>: ${p.kategori_asset || 'Elektronik'}</td></tr>
+                <tr><td>Jumlah Dipinjam</td><td>: <strong>${p.jumlah} unit</strong></td></tr>
+                <tr><td>Tanggal Pinjam</td><td>: ${p.tanggal_pinjam}</td></tr>
+                <tr><td>Batas Kembali</td><td>: <strong>${p.tanggal_kembali}</strong></td></tr>
+                <tr><td>Keperluan</td><td>: <em>${p.keterangan || '-'}</em></td></tr>
+                <tr><td>Status</td><td>: <span class="badge badge-warning text-dark font-weight-bold">${p.status_peminjaman}</span></td></tr>
+            </table>
+            <div class="mt-4 pt-3 border-top d-flex justify-content-between text-center small">
+                <div>
+                    Peminjam,<br><br><br>
+                    ( <strong>${p.nama_mahasiswa}</strong> )
                 </div>
-                <table class="table table-sm table-borderless small mb-2">
-                    <tr><td width="38%">NIM Peminjam</td><td>: <strong>${trx.nim}</strong></td></tr>
-                    <tr><td>Nama Mahasiswa</td><td>: <strong>${trx.nama}</strong></td></tr>
-                    <tr><td>Asset Dipinjam</td><td>: <strong>${trx.asset}</strong></td></tr>
-                    <tr><td>Tanggal Pinjam</td><td>: ${trx.tglPinjam}</td></tr>
-                    <tr><td>Batas Pengembalian</td><td>: ${trx.tglKembali}</td></tr>
-                    <tr><td>Status</td><td>: <span class="badge badge-warning">${trx.status}</span></td></tr>
-                </table>
-            `;
+                <div>
+                    Petugas Logistik,<br><br><br>
+                    ( .............................. )
+                </div>
+            </div>
+        `;
         $("#isiSlip").html(content);
         $("#modalSlip").modal("show");
       }
 
-      function initPage() {
-        const today = new Date().toISOString().split("T")[0];
-        $("#tglPinjam").val(today);
+      function initDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        $("#tglPinjam").val(`${yyyy}-${mm}-${dd}`);
 
-        loadMhsOptions();
-        loadAssetOptions();
-        loadTransaksi();
+        // Default kembali 2 hari kemudian
+        const returnDate = new Date();
+        returnDate.setDate(today.getDate() + 2);
+        const r_yyyy = returnDate.getFullYear();
+        const r_mm = String(returnDate.getMonth() + 1).padStart(2, '0');
+        const r_dd = String(returnDate.getDate()).padStart(2, '0');
+        $("#tglKembali").val(`${r_yyyy}-${r_mm}-${r_dd}`);
       }
 
       $(document).ready(function () {
-        initPage();
+        initDate();
+        loadMhsOptions();
+        loadAssetOptions();
+        loadPeminjaman();
       });
     </script>
   </body>

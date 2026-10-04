@@ -24,18 +24,18 @@
             white-space: nowrap !important;
         }
 
-        .badge-kode {
+        .badge-id {
             background-color: #eff6ff;
             color: #3b66de;
             border: 1px solid #bfdbfe;
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 4px;
             font-weight: 700;
             font-size: 0.8rem;
             display: inline-block;
         }
 
-        /* Badge Status (Hanya 2: Tersedia dan Dipinjam) */
+        /* Badge Status */
         .badge-status-asset {
             border-radius: 20px;
             padding: 4px 14px;
@@ -44,7 +44,6 @@
             color: white;
             display: inline-block;
         }
-
         .badge-tersedia { background-color: #10b981; }
         .badge-dipinjam { background-color: #f59e0b; }
 
@@ -86,7 +85,7 @@
 
 <body id="page-top">
     <div id="wrapper">
-        <!-- Sidebar Identik & Sinkron -->
+        <!-- Sidebar ASLI LENGKAP -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
                 <div class="sidebar-brand-icon rotate-n-15">
@@ -165,9 +164,9 @@
                     <!-- Card Tabel Asset -->
                     <div class="card shadow mb-4 border-0">
                         <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">Daftar Inventaris Asset Kampus</h6>
-                            <button class="btn btn-sm btn-outline-primary font-weight-bold" onclick="resetToApiData()">
-                                <i class="fas fa-sync-alt mr-1"></i> Refresh
+                            <h6 class="m-0 font-weight-bold text-primary">Daftar Inventaris Asset Kampus (Dari API Server)</h6>
+                            <button class="btn btn-sm btn-outline-primary font-weight-bold" onclick="loadDataAsset()">
+                                <i class="fas fa-sync-alt mr-1"></i> Refresh Data
                             </button>
                         </div>
                         <div class="card-body">
@@ -176,18 +175,18 @@
                                     <thead class="thead-siakad">
                                         <tr>
                                             <th class="text-center" style="width: 5%">No</th>
-                                            <th style="width: 15%">Kode Asset</th>
+                                            <th style="width: 10%">ID Asset</th>
                                             <th style="width: 25%">Nama Asset</th>
                                             <th style="width: 15%">Kategori</th>
-                                            <th style="width: 15%">Kondisi</th>
-                                            <th style="width: 13%">Status</th>
-                                            <th class="text-center" style="width: 12%">Aksi</th>
+                                            <th class="text-center" style="width: 8%">Jumlah</th>
+                                            <th style="width: 15%">Lokasi</th>
+                                            <th class="text-center" style="width: 10%">Kondisi</th>
+                                            <th class="text-center" style="width: 10%">Status</th>
+                                            <th class="text-center" style="width: 8%">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbodyAsset">
-                                        <tr>
-                                            <td colspan="7" class="text-center text-muted py-4">Memuat data...</td>
-                                        </tr>
+                                        <!-- Data otomatis dimuat JavaScript -->
                                     </tbody>
                                 </table>
                             </div>
@@ -217,35 +216,40 @@
                 <form id="formTambahAsset">
                     <div class="modal-body p-4">
                         <div class="form-row mb-3">
-                            <div class="form-group col-md-4">
-                                <label class="small font-weight-bold text-gray-700">Kode Asset</label>
-                                <input type="text" id="addKodeAsset" class="form-control" placeholder="Contoh: AST-001" required>
-                            </div>
                             <div class="form-group col-md-8">
                                 <label class="small font-weight-bold text-gray-700">Nama Asset</label>
-                                <input type="text" id="addNamaAsset" class="form-control" placeholder="Contoh: Proyektor Epson EB-X400" required>
+                                <input type="text" id="addNamaAsset" class="form-control" placeholder="Contoh: Laptop Asus ROG" required>
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label class="small font-weight-bold text-gray-700">Kategori Asset</label>
                                 <select id="addKategori" class="custom-select" required>
-                                    <option value="Elektronik">Elektronik</option>
+                                    <option value="Elektronik" selected>Elektronik</option>
+                                    <option value="Kabel">Kabel</option>
                                     <option value="Fasilitas Lab">Fasilitas Lab</option>
                                     <option value="Perlengkapan Acara">Perlengkapan Acara</option>
                                     <option value="Alat Perkuliahan">Alat Perkuliahan</option>
                                 </select>
                             </div>
-                            <!-- Kondisi: Hanya Baik dan Rusak -->
-                            <div class="form-group col-md-4">
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="form-group col-md-6">
+                                <label class="small font-weight-bold text-gray-700">Jumlah Unit</label>
+                                <input type="number" id="addJumlah" class="form-control" min="1" value="1" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="small font-weight-bold text-gray-700">Lokasi Penempatan</label>
+                                <input type="text" id="addLokasi" class="form-control" placeholder="Contoh: Lab Komputer 1 / Tendik / Gudang" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label class="small font-weight-bold text-gray-700">Kondisi</label>
                                 <select id="addKondisi" class="custom-select" required>
                                     <option value="Baik" selected>Baik</option>
                                     <option value="Rusak">Rusak</option>
                                 </select>
                             </div>
-                            <!-- Status: Hanya Tersedia dan Dipinjam -->
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label class="small font-weight-bold text-gray-700">Status Asset</label>
                                 <select id="addStatus" class="custom-select" required>
                                     <option value="Tersedia" selected>Tersedia</option>
@@ -275,35 +279,40 @@
                     <div class="modal-body p-4">
                         <input type="hidden" id="editId">
                         <div class="form-row mb-3">
-                            <div class="form-group col-md-4">
-                                <label class="small font-weight-bold text-gray-700">Kode Asset</label>
-                                <input type="text" id="editKodeAsset" class="form-control" required readonly>
-                            </div>
                             <div class="form-group col-md-8">
                                 <label class="small font-weight-bold text-gray-700">Nama Asset</label>
                                 <input type="text" id="editNamaAsset" class="form-control" required>
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="form-group col-md-4">
                                 <label class="small font-weight-bold text-gray-700">Kategori Asset</label>
                                 <select id="editKategori" class="custom-select" required>
                                     <option value="Elektronik">Elektronik</option>
+                                    <option value="Kabel">Kabel</option>
                                     <option value="Fasilitas Lab">Fasilitas Lab</option>
                                     <option value="Perlengkapan Acara">Perlengkapan Acara</option>
                                     <option value="Alat Perkuliahan">Alat Perkuliahan</option>
                                 </select>
                             </div>
-                            <!-- Kondisi: Hanya Baik dan Rusak -->
-                            <div class="form-group col-md-4">
+                        </div>
+                        <div class="form-row mb-3">
+                            <div class="form-group col-md-6">
+                                <label class="small font-weight-bold text-gray-700">Jumlah Unit</label>
+                                <input type="number" id="editJumlah" class="form-control" min="1" required>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="small font-weight-bold text-gray-700">Lokasi Penempatan</label>
+                                <input type="text" id="editLokasi" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
                                 <label class="small font-weight-bold text-gray-700">Kondisi</label>
                                 <select id="editKondisi" class="custom-select" required>
                                     <option value="Baik">Baik</option>
                                     <option value="Rusak">Rusak</option>
                                 </select>
                             </div>
-                            <!-- Status: Hanya Tersedia dan Dipinjam -->
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-md-6">
                                 <label class="small font-weight-bold text-gray-700">Status Asset</label>
                                 <select id="editStatus" class="custom-select" required>
                                     <option value="Tersedia">Tersedia</option>
@@ -326,95 +335,60 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- ================= JAVASCRIPT CRUD================= -->
+    <!-- SCRIPT CRUD ASSET SESUAI STRUKTUR API ASLI -->
     <script>
-        // DAFTAR LINK ENDPOINT API:
         const API_READ   = "https://api.melangkah.my.id/asset/read.php";
         const API_CREATE = "https://api.melangkah.my.id/asset/create.php";
         const API_UPDATE = "https://api.melangkah.my.id/asset/update.php";
         const API_DELETE = "https://api.melangkah.my.id/asset/delete.php";
-        const API_DETAIL = "https://api.melangkah.my.id/asset/detail.php";
 
-        const STORAGE_KEY = "SIAKAD_ASSET_DATA";
         let assetList = [];
 
-        // Data bawaan standar
-        const defaultAssets = [
-            { id: 1, kode_asset: "AST-001", nama_asset: "Proyektor Epson EB-X400", kategori: "Elektronik", kondisi: "Baik", status: "Tersedia" },
-            { id: 2, kode_asset: "AST-002", nama_asset: "Laptop Asus ExpertBook Core i5", kategori: "Elektronik", kondisi: "Baik", status: "Dipinjam" },
-            { id: 3, kode_asset: "AST-003", nama_asset: "Kamera DSLR Canon EOS 3000D", kategori: "Perlengkapan Acara", kondisi: "Rusak", status: "Tersedia" }
-        ];
-
-        // Simpan ke storage lokal agar saat refresh tidak kembali ke semula
-        function saveToStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(assetList));
-        }
-
-        // 1. READ DATA 
+        // 1. BACA DATA DARI SERVER (READ)
         function loadDataAsset() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                assetList = JSON.parse(savedData);
-                renderTable(assetList);
-            } else {
-                fetch(API_READ)
-                    .then(response => response.json())
-                    .then(data => {
-                        let apiItems = Array.isArray(data) ? data : (data.data || []);
-                        if (apiItems.length > 0) {
-                            // Normalisasi agar kondisi & status sesuai 2 pilihan
-                            assetList = apiItems.map(item => ({
-                                id: item.id || item.id_asset,
-                                kode_asset: item.kode_asset || item.kode,
-                                nama_asset: item.nama_asset || item.nama,
-                                kategori: item.kategori || "Elektronik",
-                                kondisi: (item.kondisi && item.kondisi.toLowerCase().includes("rusak")) ? "Rusak" : "Baik",
-                                status: (item.status && item.status.toLowerCase().includes("pinjam")) ? "Dipinjam" : "Tersedia"
-                            }));
-                        } else {
-                            assetList = defaultAssets;
-                        }
-                        saveToStorage();
-                        renderTable(assetList);
-                    })
-                    .catch(() => {
-                        assetList = defaultAssets;
-                        saveToStorage();
-                        renderTable(assetList);
-                    });
-            }
+            fetch(API_READ)
+                .then(res => res.json())
+                .then(data => {
+                    assetList = Array.isArray(data) ? data : (data.data || []);
+                    renderTable(assetList);
+                })
+                .catch(err => {
+                    console.error("Gagal load API Asset:", err);
+                    $("#tbodyAsset").html(`<tr><td colspan="9" class="text-center text-danger py-4">Gagal memuat data asset dari server.</td></tr>`);
+                });
         }
 
-        // Reset manual jika ingin sync ulang dari API
-        function resetToApiData() {
-            localStorage.removeItem(STORAGE_KEY);
-            loadDataAsset();
-            alert("Data di-refresh ulang dari API!");
-        }
-
+        // TAMPILKAN TABEL
         function renderTable(data) {
             let html = "";
             if (!data || data.length === 0) {
-                html = `<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada data asset ditemukan.</td></tr>`;
+                html = `<tr><td colspan="9" class="text-center text-muted py-4">Tidak ada data asset ditemukan.</td></tr>`;
             } else {
                 data.forEach((item, index) => {
-                    let badgeClass = (item.status === "Dipinjam") ? "badge-dipinjam" : "badge-tersedia";
-                    let kondisiClass = (item.kondisi === "Rusak") ? "kondisi-rusak" : "kondisi-baik";
+                    const statusText = item.status || "Tersedia";
+                    const isDipinjam = statusText.toLowerCase().includes("pinjam");
+                    const badgeStatus = isDipinjam ? "badge-dipinjam" : "badge-tersedia";
+
+                    const kondisiText = item.kondisi || "Baik";
+                    const isRusak = kondisiText.toLowerCase().includes("rusak");
+                    const badgeKondisi = isRusak ? "kondisi-rusak" : "kondisi-baik";
 
                     html += `
                         <tr>
                             <td class="text-center">${index + 1}</td>
-                            <td><span class="badge-kode">${item.kode_asset || ('AST-00' + (index + 1))}</span></td>
+                            <td><span class="badge-id">AST-${item.id}</span></td>
                             <td class="font-weight-bold text-dark">${item.nama_asset}</td>
                             <td>${item.kategori || 'Elektronik'}</td>
-                            <td><span class="badge-kondisi ${kondisiClass}">${item.kondisi || 'Baik'}</span></td>
-                            <td><span class="badge-status-asset ${badgeClass}">${item.status || 'Tersedia'}</span></td>
+                            <td class="text-center font-weight-bold">${item.jumlah || 1}</td>
+                            <td>${item.lokasi || '-'}</td>
+                            <td class="text-center"><span class="badge-kondisi ${badgeKondisi}">${kondisiText}</span></td>
+                            <td class="text-center"><span class="badge-status-asset ${badgeStatus}">${statusText}</span></td>
                             <td class="text-center">
                                 <div class="action-container">
-                                    <button type="button" class="btn-action-edit" title="Edit" onclick="openEditModal(${item.id})">
+                                    <button type="button" class="btn-action-edit" title="Edit" onclick="openEditModal(${index})">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button type="button" class="btn-action-delete" title="Hapus" onclick="hapusAsset(${item.id})">
+                                    <button type="button" class="btn-action-delete" title="Hapus" onclick="hapusAsset('${item.id}')">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
@@ -426,110 +400,116 @@
             $("#tbodyAsset").html(html);
         }
 
-        // 2. CREATE DATA (create.php)
-        $("#formTambahAsset").on("submit", function (e) {
+        // FUNGSI PENGIRIM KE API (DUAL MODE)
+        async function kirimKeApiAsset(url, payload) {
+            let fd = new FormData();
+            for (let k in payload) {
+                fd.append(k, payload[k]);
+            }
+
+            let res = await fetch(url, { method: "POST", body: fd });
+            let text = await res.text();
+
+            if (text.includes("kosong") || text.includes("null") || text.includes("wajib")) {
+                let resJson = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                text = await resJson.text();
+            }
+
+            return text;
+        }
+
+        // 2. TAMBAH ASSET (CREATE)
+        $("#formTambahAsset").on("submit", async function (e) {
             e.preventDefault();
-            const newId = Date.now();
+
             const payload = {
-                id: newId,
-                kode_asset: $("#addKodeAsset").val(),
-                nama_asset: $("#addNamaAsset").val(),
+                nama_asset: $("#addNamaAsset").val().trim(),
                 kategori: $("#addKategori").val(),
+                jumlah: $("#addJumlah").val(),
+                lokasi: $("#addLokasi").val().trim(),
                 kondisi: $("#addKondisi").val(),
                 status: $("#addStatus").val()
             };
 
-            // Simpan lokal langsung agar tidak hilang
-            assetList.push(payload);
-            saveToStorage();
-            renderTable(assetList);
+            try {
+                const balasan = await kirimKeApiAsset(API_CREATE, payload);
+                console.log("Respon Create Asset:", balasan);
 
-            // Kirim ke server
-            let fd = new FormData();
-            fd.append("kode_asset", payload.kode_asset);
-            fd.append("nama_asset", payload.nama_asset);
-            fd.append("kategori", payload.kategori);
-            fd.append("kondisi", payload.kondisi);
-            fd.append("status", payload.status);
+                alert("Balasan Server:\n" + balasan);
 
-            fetch(API_CREATE, { method: "POST", body: fd }).catch(err => console.log(err));
-
-            $("#modalTambahAsset").modal("hide");
-            $("#formTambahAsset")[0].reset();
-            alert("Data Asset Berhasil Ditambahkan!");
+                $("#modalTambahAsset").modal("hide");
+                $("#formTambahAsset")[0].reset();
+                loadDataAsset();
+            } catch (err) {
+                alert("Gagal tambah asset: " + err.message);
+            }
         });
 
-        // 3. EDIT & UPDATE DATA (DIPERBAIKI: Nilai Kondisi dan Status Tersimpan Persisten)
-        function openEditModal(id) {
-            const item = assetList.find(a => a.id == id);
-            if (item) {
-                $("#editId").val(item.id);
-                $("#editKodeAsset").val(item.kode_asset);
-                $("#editNamaAsset").val(item.nama_asset);
-                $("#editKategori").val(item.kategori || "Elektronik");
+        // 3. EDIT ASSET (UPDATE)
+        function openEditModal(index) {
+            const item = assetList[index];
+            if (!item) return;
 
-                // Set Kondisi: Hanya "Baik" atau "Rusak"
-                const kondisiVal = (item.kondisi && item.kondisi.toLowerCase().includes("rusak")) ? "Rusak" : "Baik";
-                $("#editKondisi").val(kondisiVal);
+            $("#editId").val(item.id);
+            $("#editNamaAsset").val(item.nama_asset);
+            $("#editKategori").val(item.kategori || "Elektronik");
+            $("#editJumlah").val(item.jumlah || 1);
+            $("#editLokasi").val(item.lokasi || "");
+            $("#editKondisi").val(item.kondisi || "Baik");
+            $("#editStatus").val(item.status || "Tersedia");
 
-                // Set Status: Hanya "Tersedia" atau "Dipinjam"
-                const statusVal = (item.status && item.status.toLowerCase().includes("pinjam")) ? "Dipinjam" : "Tersedia";
-                $("#editStatus").val(statusVal);
-
-                $("#modalEditAsset").modal("show");
-            }
+            $("#modalEditAsset").modal("show");
         }
 
-        $("#formEditAsset").on("submit", function (e) {
+        $("#formEditAsset").on("submit", async function (e) {
             e.preventDefault();
             const id = $("#editId").val();
-            const updatePayload = {
+
+            const payload = {
                 id: id,
-                kode_asset: $("#editKodeAsset").val(),
-                nama_asset: $("#editNamaAsset").val(),
+                nama_asset: $("#editNamaAsset").val().trim(),
                 kategori: $("#editKategori").val(),
-                kondisi: $("#editKondisi").val(), // Nilai yang dipilih (Baik/Rusak)
-                status: $("#editStatus").val()    // Nilai yang dipilih (Tersedia/Dipinjam)
+                jumlah: $("#editJumlah").val(),
+                lokasi: $("#editLokasi").val().trim(),
+                kondisi: $("#editKondisi").val(),
+                status: $("#editStatus").val()
             };
 
-            // 1. Perbarui langsung di memori dan simpan ke localStorage
-            const idx = assetList.findIndex(a => a.id == id);
-            if (idx !== -1) {
-                assetList[idx] = { ...assetList[idx], ...updatePayload };
-                saveToStorage(); // <-- Menyimpan perubahan secara permanen
-                renderTable(assetList);
+            try {
+                const balasan = await kirimKeApiAsset(`${API_UPDATE}?id=${id}`, payload);
+                console.log("Respon Update Asset:", balasan);
+
+                alert("Balasan Server:\n" + balasan);
+
+                $("#modalEditAsset").modal("hide");
+                loadDataAsset();
+            } catch (err) {
+                alert("Gagal update asset: " + err.message);
             }
-
-            // 2. Kirim update ke endpoint update.php
-            let fd = new FormData();
-            fd.append("id", id);
-            fd.append("kode_asset", updatePayload.kode_asset);
-            fd.append("nama_asset", updatePayload.nama_asset);
-            fd.append("kategori", updatePayload.kategori);
-            fd.append("kondisi", updatePayload.kondisi);
-            fd.append("status", updatePayload.status);
-
-            fetch(`${API_UPDATE}?id=${id}`, {
-                method: "POST",
-                body: fd
-            }).catch(e => console.log("Update offline"));
-
-            $("#modalEditAsset").modal("hide");
-            alert("Data Asset Berhasil Diperbarui!");
         });
 
-        // 4. DELETE DATA (delete.php)
-        function hapusAsset(id) {
-            if (confirm("Apakah Anda yakin ingin menghapus data asset ini?")) {
-                assetList = assetList.filter(a => a.id != id);
-                saveToStorage();
-                renderTable(assetList);
+        // 4. HAPUS ASSET (DELETE)
+        async function hapusAsset(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus data asset ini dari server?")) {
+                try {
+                    let fd = new FormData();
+                    fd.append("id", id);
 
-                let fd = new FormData();
-                fd.append("id", id);
-                fetch(`${API_DELETE}?id=${id}`, { method: "POST", body: fd }).catch(e => console.log(e));
+                    const res = await fetch(`${API_DELETE}?id=${id}`, {
+                        method: "POST",
+                        body: fd
+                    });
+                    const balasan = await res.text();
 
-                alert("Data Asset Berhasil Dihapus!");
+                    alert("Balasan Server:\n" + balasan);
+                    loadDataAsset();
+                } catch (err) {
+                    alert("Gagal hapus: " + err.message);
+                }
             }
         }
 
