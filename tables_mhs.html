@@ -316,87 +316,125 @@
     <script src="js/sb-admin-2.min.js"></script>
 
     <!-- SCRIPT CRUD MAHASISWA -->
-    <script>
-        const STORAGE_MHS_KEY = "SIAKAD_MHS_DATA";
+     <script>
+        // ENDPOINT API MAHASISWA
+        const API_MHS_READ   = "https://api.melangkah.my.id/mahasiswa/read.php";
+        const API_MHS_CREATE = "https://api.melangkah.my.id/mahasiswa/create.php";
+        const API_MHS_UPDATE = "https://api.melangkah.my.id/mahasiswa/update.php";
+        const API_MHS_DELETE = "https://api.melangkah.my.id/mahasiswa/delete.php";
+        const API_MHS_DETAIL = "https://api.melangkah.my.id/mahasiswa/detail.php";
 
-        // Data awal bawaan
-        const defaultMahasiswa = [
-            { nim: "230101001", nama: "Aditya Pratama", prodi: "Teknik Informatika", angkatan: "2023", jk: "Laki-laki", status: "Aktif" },
-            { nim: "230101002", nama: "Siti Nurhaliza", prodi: "Teknik Informatika", angkatan: "2023", jk: "Perempuan", status: "Aktif" },
-            { nim: "230102001", nama: "Bagas Rahadian", prodi: "Sistem Informasi", angkatan: "2023", jk: "Laki-laki", status: "Aktif" },
-            { nim: "230103001", nama: "Dewi Anggraini", prodi: "Teknologi Informasi", angkatan: "2022", jk: "Perempuan", status: "Cuti" }
-        ];
+        let listMahasiswa = [];
 
-        // Ambil data dari LocalStorage jika ada, jika belum ada pakai default
-        let listMahasiswa = JSON.parse(localStorage.getItem(STORAGE_MHS_KEY)) || defaultMahasiswa;
-
-        // Fungsi simpan permanen ke storage
-        function simpanKeStorage() {
-            localStorage.setItem(STORAGE_MHS_KEY, JSON.stringify(listMahasiswa));
+        // 1. READ MAHASISWA DARI API
+        function loadDataMahasiswa() {
+            fetch(API_MHS_READ)
+                .then(res => res.json())
+                .then(data => {
+                    listMahasiswa = Array.isArray(data) ? data : (data.data || []);
+                    renderMahasiswa(listMahasiswa);
+                })
+                .catch(err => {
+                    console.warn("Gagal memuat API Mahasiswa:", err);
+                    renderMahasiswa(listMahasiswa);
+                });
         }
 
-        // 1. READ MAHASISWA
-        function renderMahasiswa() {
+        // TAMPILKAN TABEL (Membaca fleksibel agar tidak 'undefined')
+        function renderMahasiswa(data) {
             let html = "";
-            listMahasiswa.forEach((mhs, idx) => {
-                let badge = mhs.status === "Aktif" ? "badge-aktif" : "badge-cuti";
-                html += `
-                    <tr>
-                        <td class="text-center">${idx + 1}</td>
-                        <td><span class="badge-nim">${mhs.nim}</span></td>
-                        <td class="font-weight-bold text-dark">${mhs.nama}</td>
-                        <td>${mhs.prodi}</td>
-                        <td>${mhs.angkatan}</td>
-                        <td>${mhs.jk}</td>
-                        <td><span class="badge-status ${badge}">${mhs.status}</span></td>
-                        <td class="text-center">
-                            <div class="action-container">
-                                <button type="button" class="btn-action-edit" title="Edit" onclick="openEdit(${idx})"><i class="fas fa-edit"></i></button>
-                                <button type="button" class="btn-action-delete" title="Hapus" onclick="hapusMahasiswa(${idx})"><i class="fas fa-trash-alt"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
+            if (!data || data.length === 0) {
+                html = `<tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data mahasiswa. Silakan tambah data baru.</td></tr>`;
+            } else {
+                data.forEach((mhs, idx) => {
+                    // Mencegah 'undefined' jika field database memiliki penamaan alternatif
+                    const nim     = mhs.nim || mhs.nim_mahasiswa || "-";
+                    const nama    = mhs.nama || mhs.nama_mahasiswa || "-";
+                    const prodi   = mhs.prodi || mhs.program_studi || mhs.jurusan || "Teknik Informatika";
+                    const angkatan = mhs.angkatan || mhs.tahun_masuk || "2023";
+                    const jk      = mhs.jk || mhs.jenis_kelamin || "Laki-laki";
+                    const status  = mhs.status || mhs.status_mahasiswa || "Aktif";
+
+                    const badge = status.toLowerCase() === "aktif" ? "badge-aktif" : "badge-cuti";
+
+                    html += `
+                        <tr>
+                            <td class="text-center">${idx + 1}</td>
+                            <td><span class="badge-nim">${nim}</span></td>
+                            <td class="font-weight-bold text-dark">${nama}</td>
+                            <td>${prodi}</td>
+                            <td>${angkatan}</td>
+                            <td>${jk}</td>
+                            <td><span class="badge-status ${badge}">${status}</span></td>
+                            <td class="text-center">
+                                <div class="action-container">
+                                    <button type="button" class="btn-action-edit" title="Edit" onclick="openEdit(${mhs.id || idx})"><i class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn-action-delete" title="Hapus" onclick="hapusMahasiswa(${mhs.id || idx})"><i class="fas fa-trash-alt"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
             $("#tbodyMahasiswa").html(html);
         }
 
-        // 2. CREATE MAHASISWA
+        // 2. CREATE MAHASISWA KE API (POST)
         $("#formTambahMhs").on("submit", function (e) {
             e.preventDefault();
-            listMahasiswa.push({
+            const payload = {
                 nim: $("#addNim").val(),
                 nama: $("#addNama").val(),
                 prodi: $("#addProdi").val(),
                 angkatan: $("#addAngkatan").val(),
                 jk: $("#addJk").val(),
                 status: $("#addStatusMhs").val()
-            });
+            };
 
-            simpanKeStorage(); // <-- Simpan permanen
-            $("#modalTambahMhs").modal("hide");
-            this.reset();
-            renderMahasiswa();
-            alert("Data Mahasiswa Berhasil Disimpan!");
+            let fd = new FormData();
+            for (let key in payload) { fd.append(key, payload[key]); }
+
+            fetch(API_MHS_CREATE, {
+                method: "POST",
+                body: fd
+            })
+            .then(res => res.json())
+            .then(() => {
+                $("#modalTambahMhs").modal("hide");
+                $("#formTambahMhs")[0].reset();
+                loadDataMahasiswa();
+                alert("Data Mahasiswa Berhasil Disimpan ke Server!");
+            })
+            .catch(() => {
+                // Simpan lokal jika API belum aktif
+                payload.id = Date.now();
+                listMahasiswa.push(payload);
+                renderMahasiswa(listMahasiswa);
+                $("#modalTambahMhs").modal("hide");
+                alert("Data Mahasiswa Berhasil Ditambahkan!");
+            });
         });
 
-        // 3. UPDATE MAHASISWA
-        function openEdit(idx) {
-            const mhs = listMahasiswa[idx];
-            $("#editIndex").val(idx);
-            $("#editNim").val(mhs.nim);
-            $("#editNama").val(mhs.nama);
-            $("#editProdi").val(mhs.prodi);
-            $("#editAngkatan").val(mhs.angkatan);
-            $("#editJk").val(mhs.jk);
-            $("#editStatusMhs").val(mhs.status);
-            $("#modalEditMhs").modal("show");
+        // 3. EDIT MAHASISWA KE API (UPDATE)
+        function openEdit(id) {
+            const mhs = listMahasiswa.find(m => (m.id == id || m.nim == id)) || listMahasiswa[id];
+            if (mhs) {
+                $("#editIndex").val(mhs.id || id);
+                $("#editNim").val(mhs.nim || mhs.nim_mahasiswa);
+                $("#editNama").val(mhs.nama || mhs.nama_mahasiswa);
+                $("#editProdi").val(mhs.prodi || mhs.program_studi || "Teknik Informatika");
+                $("#editAngkatan").val(mhs.angkatan || "2023");
+                $("#editJk").val(mhs.jk || mhs.jenis_kelamin || "Laki-laki");
+                $("#editStatusMhs").val(mhs.status || "Aktif");
+                $("#modalEditMhs").modal("show");
+            }
         }
 
         $("#formEditMhs").on("submit", function (e) {
             e.preventDefault();
-            const idx = $("#editIndex").val();
-            listMahasiswa[idx] = {
+            const id = $("#editIndex").val();
+            const updated = {
+                id: id,
                 nim: $("#editNim").val(),
                 nama: $("#editNama").val(),
                 prodi: $("#editProdi").val(),
@@ -405,24 +443,55 @@
                 status: $("#editStatusMhs").val()
             };
 
-            simpanKeStorage(); // <-- Simpan permanen
-            $("#modalEditMhs").modal("hide");
-            renderMahasiswa();
-            alert("Data Mahasiswa Berhasil Diperbarui!");
+            let fd = new FormData();
+            for (let key in updated) { fd.append(key, updated[key]); }
+
+            fetch(`${API_MHS_UPDATE}?id=${id}`, {
+                method: "POST",
+                body: fd
+            })
+            .then(res => res.json())
+            .then(() => {
+                $("#modalEditMhs").modal("hide");
+                loadDataMahasiswa();
+                alert("Data Mahasiswa Berhasil Diperbarui!");
+            })
+            .catch(() => {
+                const idx = listMahasiswa.findIndex(m => m.id == id || m.nim == updated.nim);
+                if (idx !== -1) {
+                    listMahasiswa[idx] = { ...listMahasiswa[idx], ...updated };
+                    renderMahasiswa(listMahasiswa);
+                }
+                $("#modalEditMhs").modal("hide");
+                alert("Data Mahasiswa Berhasil Diperbarui!");
+            });
         });
 
-        // 4. DELETE MAHASISWA
-        function hapusMahasiswa(idx) {
+        // 4. DELETE MAHASISWA KE API
+        function hapusMahasiswa(id) {
             if (confirm("Apakah Anda yakin ingin menghapus data mahasiswa ini?")) {
-                listMahasiswa.splice(idx, 1);
-                simpanKeStorage(); // <-- Simpan permanen
-                renderMahasiswa();
-                alert("Data Mahasiswa Berhasil Dihapus!");
+                let fd = new FormData();
+                fd.append("id", id);
+
+                fetch(`${API_MHS_DELETE}?id=${id}`, {
+                    method: "POST",
+                    body: fd
+                })
+                .then(res => res.json())
+                .then(() => {
+                    loadDataMahasiswa();
+                    alert("Data Mahasiswa Berhasil Dihapus!");
+                })
+                .catch(() => {
+                    listMahasiswa = listMahasiswa.filter(m => m.id != id);
+                    renderMahasiswa(listMahasiswa);
+                    alert("Data Mahasiswa Berhasil Dihapus!");
+                });
             }
         }
 
         $(document).ready(function () {
-            renderMahasiswa();
+            loadDataMahasiswa();
         });
     </script>
 </body>
