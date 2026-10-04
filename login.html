@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SIAKAD KAMPUS - Login</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <style>
+        /* Penyesuaian ikon di dalam input agar rapi */
+        .input-group-text {
+            background-color: #fff;
+            border-right: none;
+        }
+        .input-group .form-control {
+            border-left: none;
+        }
+        .input-group .form-control:focus {
+            box-shadow: none;
+        }
+    </style>
+
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+
+            <div class="col-xl-10 col-lg-12 col-md-9">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row no-gutters">
+                            
+                            <!-- Sisi Kiri (Biru Bawaan SB Admin 2) -->
+                            <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-between p-5 bg-primary text-white text-center">
+                                <div class="my-auto">
+                                    <i class="fas fa-graduation-cap fa-4x text-white-50 mb-3"></i>
+                                    <h3 class="font-weight-bold text-white mb-2">SIAKAD KAMPUS</h3>
+                                    <p class="text-white-50 small mb-0">
+                                        Sistem Informasi Akademik & Data Penilaian Mahasiswa Terpadu
+                                    </p>
+                                </div>
+                                <div class="bg-white rounded p-3 d-flex align-items-center shadow-sm text-left mt-4">
+                                    <i class="fas fa-shield-alt fa-2x text-primary mr-3"></i>
+                                    <span class="font-weight-bold small text-primary">
+                                        Portal Akademik Mahasiswa & Dosen
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Sisi Kanan (Form Login) -->
+                            <div class="col-lg-7 p-4 p-md-5 bg-white">
+                                <div class="text-center mb-4">
+                                    <h1 class="h4 text-gray-900 font-weight-bold mb-1">Selamat Datang</h1>
+                                    <p class="text-muted small mb-0">Silakan masuk menggunakan akun Anda</p>
+                                </div>
+
+                                <form action="index.html" method="POST">
+                                    <!-- Input NIP / NIM / Username -->
+                                    <div class="form-group mb-3">
+                                        <label class="small font-weight-bold text-gray-700">NIP / NIM / Username</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text text-primary"><i class="fas fa-user"></i></span>
+                                            </div>
+                                            <input type="text" class="form-control" name="username" value="admin_dosen" placeholder="Username" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Input Kata Sandi -->
+                                    <div class="form-group mb-3">
+                                        <label class="small font-weight-bold text-gray-700">Kata Sandi</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text text-primary"><i class="fas fa-lock"></i></span>
+                                            </div>
+                                            <input type="password" class="form-control" name="password" value="password123" placeholder="Kata Sandi" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dropdown Peran (Role) -->
+                                    <div class="form-group mb-3">
+                                        <label class="small font-weight-bold text-gray-700">Peran Sistem (Role)</label>
+                                        <select class="custom-select" name="role">
+                                            <option value="dosen" selected>Dosen / Pengajar</option>
+                                            <option value="mahasiswa">Mahasiswa</option>
+                                            <option value="admin">Administrator</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Ingat Saya -->
+                                    <div class="form-group mb-3">
+                                        <div class="custom-control custom-checkbox small">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck" checked>
+                                            <label class="custom-control-label text-muted" for="customCheck">Ingat Saya di Perangkat Ini</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tombol Masuk -->
+                                    <button type="submit" class="btn btn-primary btn-block shadow-sm">
+                                        <i class="fas fa-sign-in-alt mr-1"></i> Masuk ke Sistem
+                                    </button>
+                                </form>
+
+                                <!-- Box Info Demo Akun -->
+                                <div class="mt-4 p-2 rounded bg-light border text-center small text-muted">
+                                    <div class="mb-1">
+                                        <i class="fas fa-info-circle text-info mr-1"></i> <strong>Demo Login:</strong>
+                                    </div>
+                                    <div>
+                                        Username: <span class="text-danger font-weight-bold">admin_dosen</span> | 
+                                        Password: <span class="text-danger font-weight-bold">password123</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
