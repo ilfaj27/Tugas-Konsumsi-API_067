@@ -82,6 +82,37 @@
         background-color: #4e73df;
         color: #ffffff;
       }
+
+      /* CSS KHUSUS CETAK SLIP */
+    @media print {
+        /* Sembunyikan seluruh isi website */
+        body * {
+            visibility: hidden;
+        }
+
+        /* Tampilkan HANYA isi bukti slip peminjaman */
+        #isiSlip, #isiSlip * {
+            visibility: visible;
+        }
+
+        /* Atur posisi slip tepat di tengah halaman kertas */
+        #isiSlip {
+            position: absolute;
+            left: 50%;
+            top: 40px;
+            transform: translateX(-50%);
+            width: 480px;
+            border: 2px dashed #444;
+            padding: 25px;
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        /* Hilangkan efek gelap (backdrop) modal */
+        .modal-backdrop {
+            display: none !important;
+        }
+    }
     </style>
   </head>
 
