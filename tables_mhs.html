@@ -317,12 +317,23 @@
 
     <!-- SCRIPT CRUD MAHASISWA -->
     <script>
-        let listMahasiswa = [
+        const STORAGE_MHS_KEY = "SIAKAD_MHS_DATA";
+
+        // Data awal bawaan
+        const defaultMahasiswa = [
             { nim: "230101001", nama: "Aditya Pratama", prodi: "Teknik Informatika", angkatan: "2023", jk: "Laki-laki", status: "Aktif" },
             { nim: "230101002", nama: "Siti Nurhaliza", prodi: "Teknik Informatika", angkatan: "2023", jk: "Perempuan", status: "Aktif" },
             { nim: "230102001", nama: "Bagas Rahadian", prodi: "Sistem Informasi", angkatan: "2023", jk: "Laki-laki", status: "Aktif" },
             { nim: "230103001", nama: "Dewi Anggraini", prodi: "Teknologi Informasi", angkatan: "2022", jk: "Perempuan", status: "Cuti" }
         ];
+
+        // Ambil data dari LocalStorage jika ada, jika belum ada pakai default
+        let listMahasiswa = JSON.parse(localStorage.getItem(STORAGE_MHS_KEY)) || defaultMahasiswa;
+
+        // Fungsi simpan permanen ke storage
+        function simpanKeStorage() {
+            localStorage.setItem(STORAGE_MHS_KEY, JSON.stringify(listMahasiswa));
+        }
 
         // 1. READ MAHASISWA
         function renderMahasiswa() {
@@ -361,6 +372,8 @@
                 jk: $("#addJk").val(),
                 status: $("#addStatusMhs").val()
             });
+
+            simpanKeStorage(); // <-- Simpan permanen
             $("#modalTambahMhs").modal("hide");
             this.reset();
             renderMahasiswa();
@@ -391,6 +404,8 @@
                 jk: $("#editJk").val(),
                 status: $("#editStatusMhs").val()
             };
+
+            simpanKeStorage(); // <-- Simpan permanen
             $("#modalEditMhs").modal("hide");
             renderMahasiswa();
             alert("Data Mahasiswa Berhasil Diperbarui!");
@@ -400,6 +415,7 @@
         function hapusMahasiswa(idx) {
             if (confirm("Apakah Anda yakin ingin menghapus data mahasiswa ini?")) {
                 listMahasiswa.splice(idx, 1);
+                simpanKeStorage(); // <-- Simpan permanen
                 renderMahasiswa();
                 alert("Data Mahasiswa Berhasil Dihapus!");
             }
