@@ -1,253 +1,391 @@
 <!doctype html>
 <html lang="id">
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>SIAKAD - Transaksi Peminjaman Asset</title>
 
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet" />
+    <link
+      href="vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900"
+      rel="stylesheet"
+    />
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />
-    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link
+      href="vendor/datatables/dataTables.bootstrap4.min.css"
+      rel="stylesheet"
+    />
 
     <style>
-        .table thead.thead-siakad th {
-            background-color: #3e454d !important;
-            color: #ffffff !important;
-            vertical-align: middle;
-            font-size: 0.85rem;
-            font-weight: 700;
-            padding: 9px !important;
-            white-space: nowrap !important;
-        }
+      .table thead.thead-siakad th {
+        background-color: #3e454d !important;
+        color: #ffffff !important;
+        vertical-align: middle;
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 9px !important;
+        white-space: nowrap !important;
+      }
 
-        .badge-trx {
-            background-color: #eff6ff;
-            color: #3b66de;
-            border: 1px solid #bfdbfe;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            display: inline-block;
-        }
+      .badge-trx {
+        background-color: #eff6ff;
+        color: #3b66de;
+        border: 1px solid #bfdbfe;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        display: inline-block;
+      }
 
-        .badge-status {
-            border-radius: 20px;
-            padding: 4px 14px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: white;
-            display: inline-block;
-        }
-        .status-pinjam { background-color: #f59e0b; }
-        .status-kembali { background-color: #10b981; }
+      .badge-status {
+        border-radius: 20px;
+        padding: 4px 14px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: white;
+        display: inline-block;
+      }
+      .status-pinjam {
+        background-color: #f59e0b;
+      }
+      .status-kembali {
+        background-color: #10b981;
+      }
 
-        .btn-action-print {
-            width: 32px;
-            height: 32px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            border-radius: 4px;
-            color: #ffffff !important;
-            background-color: #64748b;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-action-print:hover { background-color: #475569; }
+      .btn-action-print {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 4px;
+        color: #ffffff !important;
+        background-color: #64748b;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-action-print:hover {
+        background-color: #475569;
+      }
 
-        .modal-header-primary { background-color: #4e73df; color: #ffffff; }
+      .modal-header-primary {
+        background-color: #4e73df;
+        color: #ffffff;
+      }
     </style>
-</head>
+  </head>
 
-<body id="page-top">
+  <body id="page-top">
     <div id="wrapper">
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SIAKAD <sup>APP</sup></div>
-            </a>
+      <!-- Sidebar -->
+      <ul
+        class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar"
+      >
+        <a
+          class="sidebar-brand d-flex align-items-center justify-content-center"
+          href="index.html"
+        >
+          <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <div class="sidebar-brand-text mx-3">SIAKAD <sup>APP</sup></div>
+        </a>
 
-            <hr class="sidebar-divider my-0" />
-            <li class="nav-item">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span></a>
-            </li>
+        <hr class="sidebar-divider my-0" />
+        <li class="nav-item">
+          <a class="nav-link" href="index.html">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a
+          >
+        </li>
 
-            <hr class="sidebar-divider" />
-            <div class="sidebar-heading">MASTER DATA</div>
+        <hr class="sidebar-divider" />
+        <div class="sidebar-heading">MASTER DATA</div>
 
-            <li class="nav-item">
-                <a class="nav-link" href="master_asset.html">
-                    <i class="fas fa-fw fa-boxes"></i>
-                    <span>Master Data Asset</span></a>
-            </li>
+        <li class="nav-item">
+          <a class="nav-link" href="master_asset.html">
+            <i class="fas fa-fw fa-boxes"></i>
+            <span>Master Data Asset</span></a
+          >
+        </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="tables_mhs.html">
-                    <i class="fas fa-fw fa-user-graduate"></i>
-                    <span>Master Data Mahasiswa</span></a>
-            </li>
+        <li class="nav-item">
+          <a class="nav-link" href="tables_mhs.html">
+            <i class="fas fa-fw fa-user-graduate"></i>
+            <span>Master Data Mahasiswa</span></a
+          >
+        </li>
 
-            <hr class="sidebar-divider d-none d-md-block" />
-            <div class="sidebar-heading">TRANSAKSI</div>
+        <hr class="sidebar-divider d-none d-md-block" />
+        <div class="sidebar-heading">TRANSAKSI</div>
 
-            <!-- Transaksi Peminjaman (Aktif) -->
-            <li class="nav-item active">
-                <a class="nav-link" href="transaksi.html">
-                    <i class="fas fa-fw fa-clipboard-list"></i>
-                    <span>Transaksi Peminjaman</span></a>
-            </li>
+        <!-- Transaksi Peminjaman (Aktif) -->
+        <li class="nav-item active">
+          <a class="nav-link" href="transaksi.html">
+            <i class="fas fa-fw fa-clipboard-list"></i>
+            <span>Transaksi Peminjaman</span></a
+          >
+        </li>
 
-            <hr class="sidebar-divider d-none d-md-block" />
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-        </ul>
-
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-            <div id="content">
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
-                    <ul class="navbar-nav ml-auto">
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small font-weight-bold">Dr. Dosen Pengampuh, M.Kom</span>
-                                <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-
-                <div class="container-fluid">
-                    <div class="d-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800 font-weight-bold">
-                            <i class="fas fa-clipboard-list text-primary mr-2"></i> Transaksi Peminjaman Asset Kampus
-                        </h1>
-                        <button class="btn btn-primary font-weight-bold shadow-sm" data-toggle="modal" data-target="#modalInputPinjam">
-                            <i class="fas fa-plus-circle mr-1"></i> Buat Peminjaman Baru
-                        </button>
-                    </div>
-
-                    <!-- 1. TABEL TRANSAKSI PEMINJAMAN -->
-                    <div class="card shadow mb-4 border-0">
-                        <div class="card-header py-3 bg-white d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">Rekapitulasi Peminjaman Asset</h6>
-                            <button class="btn btn-sm btn-outline-primary" onclick="initPage()"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover" id="tablePinjam" width="100%" cellspacing="0">
-                                    <thead class="thead-siakad">
-                                        <tr>
-                                            <th class="text-center" style="width: 5%">No</th>
-                                            <th style="width: 14%">Kode TRX</th>
-                                            <th style="width: 12%">Tgl Pinjam</th>
-                                            <th style="width: 12%">NIM</th>
-                                            <th style="width: 18%">Nama Mahasiswa</th>
-                                            <th style="width: 22%">Asset yang Dipinjam</th>
-                                            <th style="width: 12%">Batas Kembali</th>
-                                            <th class="text-center" style="width: 10%">Status</th>
-                                            <th class="text-center" style="width: 8%">Slip</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tbodyPinjam">
-                                        <!-- Dimuat secara dinamis oleh JavaScript -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>SIAKAD &copy; Sistem Informasi Akademik</span>
-                    </div>
-                </div>
-            </footer>
+        <hr class="sidebar-divider d-none d-md-block" />
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
+      </ul>
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+          <!-- Topbar -->
+          <nav
+            class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+          >
+            <button
+              id="sidebarToggleTop"
+              class="btn btn-link d-md-none rounded-circle mr-3"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item dropdown no-arrow">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                >
+                  <span
+                    class="mr-2 d-none d-lg-inline text-gray-600 small font-weight-bold"
+                    >Dr. Dosen Pengampuh, M.Kom</span
+                  >
+                  <img
+                    class="img-profile rounded-circle"
+                    src="img/undraw_profile.svg"
+                  />
+                </a>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="container-fluid">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800 font-weight-bold">
+                <i class="fas fa-clipboard-list text-primary mr-2"></i>
+                Transaksi Peminjaman Asset Kampus
+              </h1>
+              <button
+                class="btn btn-primary font-weight-bold shadow-sm"
+                data-toggle="modal"
+                data-target="#modalInputPinjam"
+              >
+                <i class="fas fa-plus-circle mr-1"></i> Buat Peminjaman Baru
+              </button>
+            </div>
+
+            <!-- 1. TABEL TRANSAKSI PEMINJAMAN -->
+            <div class="card shadow mb-4 border-0">
+              <div
+                class="card-header py-3 bg-white d-flex justify-content-between align-items-center"
+              >
+                <h6 class="m-0 font-weight-bold text-primary">
+                  Rekapitulasi Peminjaman Asset
+                </h6>
+                <button
+                  class="btn btn-sm btn-outline-primary"
+                  onclick="initPage()"
+                >
+                  <i class="fas fa-sync-alt mr-1"></i> Refresh
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table
+                    class="table table-bordered table-hover"
+                    id="tablePinjam"
+                    width="100%"
+                    cellspacing="0"
+                  >
+                    <thead class="thead-siakad">
+                      <tr>
+                        <th class="text-center" style="width: 5%">No</th>
+                        <th style="width: 14%">Kode TRX</th>
+                        <th style="width: 12%">Tgl Pinjam</th>
+                        <th style="width: 12%">NIM</th>
+                        <th style="width: 18%">Nama Mahasiswa</th>
+                        <th style="width: 22%">Asset yang Dipinjam</th>
+                        <th style="width: 12%">Batas Kembali</th>
+                        <th class="text-center" style="width: 10%">Status</th>
+                        <th class="text-center" style="width: 8%">Slip</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbodyPinjam">
+                      <!-- Dimuat secara dinamis oleh JavaScript -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>SIAKAD &copy; Sistem Informasi Akademik</span>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
 
     <!-- 2. MODAL FORM PEMINJAMAN -->
-    <div class="modal fade" id="modalInputPinjam" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header modal-header-primary">
-                    <h5 class="modal-title font-weight-bold"><i class="fas fa-file-signature mr-2"></i> Form Input Peminjaman Asset</h5>
-                    <button class="close text-white" type="button" data-dismiss="modal">&times;</button>
+    <div
+      class="modal fade"
+      id="modalInputPinjam"
+      tabindex="-1"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header modal-header-primary">
+            <h5 class="modal-title font-weight-bold">
+              <i class="fas fa-file-signature mr-2"></i> Form Input Peminjaman
+              Asset
+            </h5>
+            <button class="close text-white" type="button" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          <form id="formPeminjaman">
+            <div class="modal-body p-4">
+              <div class="form-row mb-3">
+                <!-- Dropdown Mahasiswa Dinamis -->
+                <div class="form-group col-md-6">
+                  <label class="small font-weight-bold text-gray-700"
+                    >Pilih Mahasiswa Peminjam</label
+                  >
+                  <select id="pinjamMhs" class="custom-select" required>
+                    <option value="" selected>
+                      -- Memuat data mahasiswa... --
+                    </option>
+                  </select>
                 </div>
-                <form id="formPeminjaman">
-                    <div class="modal-body p-4">
-                        <div class="form-row mb-3">
-                            <!-- Dropdown Mahasiswa Dinamis -->
-                            <div class="form-group col-md-6">
-                                <label class="small font-weight-bold text-gray-700">Pilih Mahasiswa Peminjam</label>
-                                <select id="pinjamMhs" class="custom-select" required>
-                                    <option value="" selected>-- Memuat data mahasiswa... --</option>
-                                </select>
-                            </div>
-                            <!-- Dropdown Asset Dinamis (Tulisan [AST] Sudah Dihilangkan) -->
-                            <div class="form-group col-md-6">
-                                <label class="small font-weight-bold text-gray-700">Pilih Asset</label>
-                                <select id="pinjamAsset" class="custom-select" required>
-                                    <option value="" selected>-- Memuat data asset... --</option>
-                                </select>
-                            </div>
-                        </div>
+                <!-- Dropdown Asset Dinamis (Tulisan [AST] Sudah Dihilangkan) -->
+                <div class="form-group col-md-6">
+                  <label class="small font-weight-bold text-gray-700"
+                    >Pilih Asset</label
+                  >
+                  <select id="pinjamAsset" class="custom-select" required>
+                    <option value="" selected>
+                      -- Memuat data asset... --
+                    </option>
+                  </select>
+                </div>
+              </div>
 
-                        <div class="form-row mb-3">
-                            <div class="form-group col-md-6">
-                                <label class="small font-weight-bold text-gray-700">Tanggal Peminjaman</label>
-                                <input type="date" id="tglPinjam" class="form-control" required>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="small font-weight-bold text-gray-700">Batas Tanggal Pengembalian</label>
-                                <input type="date" id="tglKembali" class="form-control" required>
-                            </div>
-                        </div>
+              <div class="form-row mb-3">
+                <div class="form-group col-md-6">
+                  <label class="small font-weight-bold text-gray-700"
+                    >Tanggal Peminjaman</label
+                  >
+                  <input
+                    type="date"
+                    id="tglPinjam"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="form-group col-md-6">
+                  <label class="small font-weight-bold text-gray-700"
+                    >Batas Tanggal Pengembalian</label
+                  >
+                  <input
+                    type="date"
+                    id="tglKembali"
+                    class="form-control"
+                    required
+                  />
+                </div>
+              </div>
 
-                        <div class="form-group">
-                            <label class="small font-weight-bold text-gray-700">Keperluan / Keterangan</label>
-                            <textarea id="keperluan" class="form-control" rows="2" placeholder="Contoh: Kegiatan Praktikum Seminar"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer bg-light">
-                        <button class="btn btn-secondary px-4 font-weight-bold" type="button" data-dismiss="modal">Batal</button>
-                        <button class="btn btn-primary px-4 font-weight-bold" type="submit"><i class="fas fa-save mr-1"></i> Simpan Transaksi</button>
-                    </div>
-                </form>
+              <div class="form-group">
+                <label class="small font-weight-bold text-gray-700"
+                  >Keperluan / Keterangan</label
+                >
+                <textarea
+                  id="keperluan"
+                  class="form-control"
+                  rows="2"
+                  placeholder="Contoh: Kegiatan Praktikum Seminar"
+                ></textarea>
+              </div>
             </div>
+            <div class="modal-footer bg-light">
+              <button
+                class="btn btn-secondary px-4 font-weight-bold"
+                type="button"
+                data-dismiss="modal"
+              >
+                Batal
+              </button>
+              <button
+                class="btn btn-primary px-4 font-weight-bold"
+                type="submit"
+              >
+                <i class="fas fa-save mr-1"></i> Simpan Transaksi
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
 
     <!-- MODAL SLIP PEMINJAMAN -->
-    <div class="modal fade" id="modalSlip" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-dark text-white">
-                    <h6 class="modal-title font-weight-bold"><i class="fas fa-print mr-2"></i> Bukti Peminjaman Asset</h6>
-                    <button class="close text-white" type="button" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body p-4" id="isiSlip"></div>
-                <div class="modal-footer bg-light">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Tutup</button>
-                    <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print mr-1"></i> Cetak Dokumen</button>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="modalSlip"
+      tabindex="-1"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header bg-dark text-white">
+            <h6 class="modal-title font-weight-bold">
+              <i class="fas fa-print mr-2"></i> Bukti Peminjaman Asset
+            </h6>
+            <button class="close text-white" type="button" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          <div class="modal-body p-4" id="isiSlip"></div>
+          <div class="modal-footer bg-light">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Tutup
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+              <i class="fas fa-print mr-1"></i> Cetak Dokumen
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -256,99 +394,112 @@
 
     <!-- SCRIPT LOGIKA & SINKRONISASI ASSET -->
     <script>
-        const API_READ_ASSET   = "https://api.melangkah.my.id/asset/read.php";
-        const API_UPDATE_ASSET = "https://api.melangkah.my.id/asset/update.php";
-        const STORAGE_TRX_KEY   = "SIAKAD_TRANSAKSI_DATA";
-        const STORAGE_ASSET_KEY = "SIAKAD_ASSET_DATA";
-        const STORAGE_MHS_KEY   = "SIAKAD_MHS_DATA";
+      const API_READ_ASSET = "https://api.melangkah.my.id/asset/read.php";
+      const API_UPDATE_ASSET = "https://api.melangkah.my.id/asset/update.php";
+      const API_PEMINJAMAN_READ =
+        "https://api.melangkah.my.id/peminjaman/read.php";
+      const API_PEMINJAMAN_CREATE =
+        "https://api.melangkah.my.id/peminjaman/create.php";
+      const STORAGE_TRX_KEY = "SIAKAD_TRANSAKSI_DATA";
+      const STORAGE_ASSET_KEY = "SIAKAD_ASSET_DATA";
+      const STORAGE_MHS_KEY = "SIAKAD_MHS_DATA";
 
-        let dataTransaksi = [];
-        let dataAssetList = [];
+      let dataTransaksi = [];
+      let dataAssetList = [];
 
-        // 1. LOAD PILIHAN MAHASISWA
-        function loadMhsOptions() {
-            let mhsList = [];
-            const rawMhs = localStorage.getItem(STORAGE_MHS_KEY);
-            if (rawMhs) {
-                try { mhsList = JSON.parse(rawMhs); } catch (e) {}
-            }
-
-            if (!mhsList || mhsList.length === 0) {
-                mhsList = [
-                    { nim: "230101001", nama: "Aditya Pratama" },
-                    { nim: "230101002", nama: "Siti Nurhaliza" },
-                    { nim: "230102001", nama: "Bagas Rahadian" },
-                    { nim: "230103001", nama: "Dewi Anggraini" }
-                ];
-                localStorage.setItem(STORAGE_MHS_KEY, JSON.stringify(mhsList));
-            }
-
-            let opt = `<option value="">-- Pilih Mahasiswa --</option>`;
-            mhsList.forEach(m => {
-                opt += `<option value="${m.nim}|${m.nama}">${m.nim} - ${m.nama}</option>`;
-            });
-            $("#pinjamMhs").html(opt);
+      // 1. LOAD PILIHAN MAHASISWA
+      function loadMhsOptions() {
+        let mhsList = [];
+        const rawMhs = localStorage.getItem(STORAGE_MHS_KEY);
+        if (rawMhs) {
+          try {
+            mhsList = JSON.parse(rawMhs);
+          } catch (e) {}
         }
 
-        // 2. LOAD ASSET DARI STORAGE / API 
-        function loadAssetOptions() {
-            const localAsset = localStorage.getItem(STORAGE_ASSET_KEY);
-            if (localAsset) {
-                try {
-                    dataAssetList = JSON.parse(localAsset);
-                    renderAssetDropdown(dataAssetList);
-                    return;
-                } catch (e) {}
-            }
-
-            fetch(API_READ_ASSET)
-                .then(res => res.json())
-                .then(data => {
-                    dataAssetList = Array.isArray(data) ? data : (data.data || []);
-                    renderAssetDropdown(dataAssetList);
-                })
-                .catch(() => {
-                    $("#pinjamAsset").html(`<option value="">Gagal memuat asset</option>`);
-                });
+        if (!mhsList || mhsList.length === 0) {
+          mhsList = [
+            { nim: "230101001", nama: "Aditya Pratama" },
+            { nim: "230101002", nama: "Siti Nurhaliza" },
+            { nim: "230102001", nama: "Bagas Rahadian" },
+            { nim: "230103001", nama: "Dewi Anggraini" },
+          ];
+          localStorage.setItem(STORAGE_MHS_KEY, JSON.stringify(mhsList));
         }
 
-        // Fungsi render opsi asset 
-        function renderAssetDropdown(list) {
-            let opt = `<option value="">-- Pilih Asset --</option>`;
-            list.forEach(a => {
-                const id = a.id || a.id_asset;
-                const nama = a.nama_asset || a.nama || "Asset";
-                const status = (a.status || "Tersedia");
-                const isTersedia = status.toLowerCase() === "tersedia";
+        let opt = `<option value="">-- Pilih Mahasiswa --</option>`;
+        mhsList.forEach((m) => {
+          opt += `<option value="${m.nim}|${m.nama}">${m.nim} - ${m.nama}</option>`;
+        });
+        $("#pinjamMhs").html(opt);
+      }
 
-                // Menampilkan murni nama asset dan statusnya saja
-                opt += `<option value="${id}" ${isTersedia ? "" : "disabled"}>
+      // 2. LOAD ASSET DARI STORAGE / API
+      function loadAssetOptions() {
+        const localAsset = localStorage.getItem(STORAGE_ASSET_KEY);
+        if (localAsset) {
+          try {
+            dataAssetList = JSON.parse(localAsset);
+            renderAssetDropdown(dataAssetList);
+            return;
+          } catch (e) {}
+        }
+
+        fetch(API_READ_ASSET)
+          .then((res) => res.json())
+          .then((data) => {
+            dataAssetList = Array.isArray(data) ? data : data.data || [];
+            renderAssetDropdown(dataAssetList);
+          })
+          .catch(() => {
+            $("#pinjamAsset").html(
+              `<option value="">Gagal memuat asset</option>`,
+            );
+          });
+      }
+
+      // Fungsi render opsi asset
+      function renderAssetDropdown(list) {
+        let opt = `<option value="">-- Pilih Asset --</option>`;
+        list.forEach((a) => {
+          const id = a.id || a.id_asset;
+          const nama = a.nama_asset || a.nama || "Asset";
+          const status = a.status || "Tersedia";
+          const isTersedia = status.toLowerCase() === "tersedia";
+
+          // Menampilkan murni nama asset dan statusnya saja
+          opt += `<option value="${id}" ${isTersedia ? "" : "disabled"}>
                     ${nama} - (${status})
                 </option>`;
-            });
-            $("#pinjamAsset").html(opt);
-        }
+        });
+        $("#pinjamAsset").html(opt);
+      }
 
-        // 3. LOAD DATA TRANSAKSI
-        function loadTransaksi() {
-            const rawTrx = localStorage.getItem(STORAGE_TRX_KEY);
-            if (rawTrx) {
-                try { dataTransaksi = JSON.parse(rawTrx); } catch (e) { dataTransaksi = []; }
-            } else {
-                dataTransaksi = [];
-            }
+      // 3. LOAD DATA TRANSAKSI
+      function loadTransaksi() {
+        fetch(API_PEMINJAMAN_READ)
+          .then((res) => res.json())
+          .then((data) => {
+            dataTransaksi = Array.isArray(data) ? data : data.data || [];
             renderTableTransaksi();
-        }
+          })
+          .catch(() => {
+            // Cadangan jika server offline
+            const rawTrx = localStorage.getItem(STORAGE_TRX_KEY);
+            dataTransaksi = rawTrx ? JSON.parse(rawTrx) : [];
+            renderTableTransaksi();
+          });
+      }
 
-        function renderTableTransaksi() {
-            let html = "";
-            if (dataTransaksi.length === 0) {
-                html = `<tr><td colspan="9" class="text-center text-muted py-4">Belum ada riwayat transaksi peminjaman.</td></tr>`;
-            } else {
-                dataTransaksi.forEach((trx, idx) => {
-                    const isPinjam = trx.status === "Dipinjam";
-                    const badgeClass = isPinjam ? "status-pinjam" : "status-kembali";
-                    html += `
+      function renderTableTransaksi() {
+        let html = "";
+        if (dataTransaksi.length === 0) {
+          html = `<tr><td colspan="9" class="text-center text-muted py-4">Belum ada riwayat transaksi peminjaman.</td></tr>`;
+        } else {
+          dataTransaksi.forEach((trx, idx) => {
+            const isPinjam = trx.status === "Dipinjam";
+            const badgeClass = isPinjam ? "status-pinjam" : "status-kembali";
+            html += `
                         <tr>
                             <td class="text-center">${idx + 1}</td>
                             <td><span class="badge-trx">${trx.kode}</span></td>
@@ -365,74 +516,109 @@
                             </td>
                         </tr>
                     `;
-                });
-            }
-            $("#tbodyPinjam").html(html);
+          });
+        }
+        $("#tbodyPinjam").html(html);
+      }
+
+      // 4. SIMPAN TRANSAKSI & UBAH STATUS ASSET DI MASTER DATA
+      $("#formPeminjaman").on("submit", function (e) {
+        e.preventDefault();
+        const mhsData = $("#pinjamMhs").val().split("|");
+        const selectedAssetId = $("#pinjamAsset").val();
+
+        // Cari objek asset berdasarkan ID yang dipilih
+        const assetObj = dataAssetList.find(
+          (a) => a.id == selectedAssetId || a.id_asset == selectedAssetId,
+        );
+        if (!assetObj) {
+          alert("Silakan pilih asset yang valid!");
+          return;
         }
 
-        // 4. SIMPAN TRANSAKSI & UBAH STATUS ASSET DI MASTER DATA
-        $("#formPeminjaman").on("submit", function (e) {
-            e.preventDefault();
-            const mhsData = $("#pinjamMhs").val().split("|");
-            const selectedAssetId = $("#pinjamAsset").val();
+        const newTrx = {
+          kode: "TRP-" + Math.floor(100000 + Math.random() * 900000),
+          tglPinjam: $("#tglPinjam").val(),
+          nim: mhsData[0],
+          nama: mhsData[1],
+          id_asset: selectedAssetId,
+          asset: assetObj.nama_asset || assetObj.nama,
+          tglKembali: $("#tglKembali").val(),
+          status: "Dipinjam",
+        };
 
-            // Cari objek asset berdasarkan ID yang dipilih
-            const assetObj = dataAssetList.find(a => (a.id == selectedAssetId || a.id_asset == selectedAssetId));
-            if (!assetObj) {
-                alert("Silakan pilih asset yang valid!");
-                return;
-            }
+        // 1. Simpan Transaksi Baru ke LocalStorage
+        dataTransaksi.unshift(newTrx);
+        localStorage.setItem(STORAGE_TRX_KEY, JSON.stringify(dataTransaksi));
 
-            const newTrx = {
-                kode: "TRP-" + Math.floor(100000 + Math.random() * 900000),
-                tglPinjam: $("#tglPinjam").val(),
-                nim: mhsData[0],
-                nama: mhsData[1],
-                id_asset: selectedAssetId,
-                asset: assetObj.nama_asset || assetObj.nama,
-                tglKembali: $("#tglKembali").val(),
-                status: "Dipinjam"
-            };
+        let fdPeminjaman = new FormData();
+        fdPeminjaman.append("kode_transaksi", newTrx.kode);
+        fdPeminjaman.append("tgl_pinjam", newTrx.tglPinjam);
+        fdPeminjaman.append("nim", newTrx.nim);
+        fdPeminjaman.append("nama_mahasiswa", newTrx.nama);
+        fdPeminjaman.append("id_asset", selectedAssetId);
+        fdPeminjaman.append("nama_asset", newTrx.asset);
+        fdPeminjaman.append("tgl_kembali", newTrx.tglKembali);
+        fdPeminjaman.append("status", "Dipinjam");
 
-            // 1. Simpan Transaksi Baru ke LocalStorage
-            dataTransaksi.unshift(newTrx);
-            localStorage.setItem(STORAGE_TRX_KEY, JSON.stringify(dataTransaksi));
+        fetch(API_PEMINJAMAN_CREATE, {
+          method: "POST",
+          body: fdPeminjaman,
+        }).catch((err) =>
+          console.log("Gagal kirim peminjaman ke server:", err),
+        );
 
-            // 2. UBAH STATUS ASSET MENJADI "Dipinjam" DI STORAGE MASTER ASSET
-            const assetIdx = dataAssetList.findIndex(a => (a.id == selectedAssetId || a.id_asset == selectedAssetId));
-            if (assetIdx !== -1) {
-                dataAssetList[assetIdx].status = "Dipinjam";
-                // Simpan perubahan ke storage agar Master Data Asset & Dashboard otomatis ikut berubah
-                localStorage.setItem(STORAGE_ASSET_KEY, JSON.stringify(dataAssetList));
+        // 2. UBAH STATUS ASSET MENJADI "Dipinjam" DI STORAGE MASTER ASSET
+        const assetIdx = dataAssetList.findIndex(
+          (a) => a.id == selectedAssetId || a.id_asset == selectedAssetId,
+        );
+        if (assetIdx !== -1) {
+          dataAssetList[assetIdx].status = "Dipinjam";
+          // Simpan perubahan ke storage agar Master Data Asset & Dashboard otomatis ikut berubah
+          localStorage.setItem(
+            STORAGE_ASSET_KEY,
+            JSON.stringify(dataAssetList),
+          );
 
-                // Kirim perubahan status ke server update.php
-                let fd = new FormData();
-                fd.append("id", selectedAssetId);
-                fd.append("kode_asset", dataAssetList[assetIdx].kode_asset || dataAssetList[assetIdx].kode || "");
-                fd.append("nama_asset", dataAssetList[assetIdx].nama_asset || dataAssetList[assetIdx].nama);
-                fd.append("kategori", dataAssetList[assetIdx].kategori || "Elektronik");
-                fd.append("kondisi", dataAssetList[assetIdx].kondisi || "Baik");
-                fd.append("status", "Dipinjam");
+          // Kirim perubahan status ke server update.php
+          let fd = new FormData();
+          fd.append("id", selectedAssetId);
+          fd.append(
+            "kode_asset",
+            dataAssetList[assetIdx].kode_asset ||
+              dataAssetList[assetIdx].kode ||
+              "",
+          );
+          fd.append(
+            "nama_asset",
+            dataAssetList[assetIdx].nama_asset || dataAssetList[assetIdx].nama,
+          );
+          fd.append(
+            "kategori",
+            dataAssetList[assetIdx].kategori || "Elektronik",
+          );
+          fd.append("kondisi", dataAssetList[assetIdx].kondisi || "Baik");
+          fd.append("status", "Dipinjam");
 
-                fetch(`${API_UPDATE_ASSET}?id=${selectedAssetId}`, {
-                    method: "POST",
-                    body: fd
-                }).catch(err => console.log("Update offline"));
-            }
+          fetch(`${API_UPDATE_ASSET}?id=${selectedAssetId}`, {
+            method: "POST",
+            body: fd,
+          }).catch((err) => console.log("Update offline"));
+        }
 
-            // 3. Render Ulang Tabel & Dropdown
-            renderTableTransaksi();
-            renderAssetDropdown(dataAssetList);
+        // 3. Render Ulang Tabel & Dropdown
+        renderTableTransaksi();
+        renderAssetDropdown(dataAssetList);
 
-            $("#modalInputPinjam").modal("hide");
-            this.reset();
-            alert("Transaksi berhasil disimpan!");
-        });
+        $("#modalInputPinjam").modal("hide");
+        this.reset();
+        alert("Transaksi berhasil disimpan!");
+      });
 
-        // 5. CETAK SLIP PEMINJAMAN
-        function cetakSlip(idx) {
-            const trx = dataTransaksi[idx];
-            const content = `
+      // 5. CETAK SLIP PEMINJAMAN
+      function cetakSlip(idx) {
+        const trx = dataTransaksi[idx];
+        const content = `
                 <div class="text-center mb-3">
                     <h5 class="font-weight-bold text-dark mb-0">BUKTI PEMINJAMAN ASSET</h5>
                     <p class="small text-muted">SISTEM INFORMASI LOGISTIK KAMPUS</p>
@@ -447,22 +633,22 @@
                     <tr><td>Status</td><td>: <span class="badge badge-warning">${trx.status}</span></td></tr>
                 </table>
             `;
-            $("#isiSlip").html(content);
-            $("#modalSlip").modal("show");
-        }
+        $("#isiSlip").html(content);
+        $("#modalSlip").modal("show");
+      }
 
-        function initPage() {
-            const today = new Date().toISOString().split('T')[0];
-            $("#tglPinjam").val(today);
+      function initPage() {
+        const today = new Date().toISOString().split("T")[0];
+        $("#tglPinjam").val(today);
 
-            loadMhsOptions();
-            loadAssetOptions();
-            loadTransaksi();
-        }
+        loadMhsOptions();
+        loadAssetOptions();
+        loadTransaksi();
+      }
 
-        $(document).ready(function () {
-            initPage();
-        });
+      $(document).ready(function () {
+        initPage();
+      });
     </script>
-</body>
+  </body>
 </html>
